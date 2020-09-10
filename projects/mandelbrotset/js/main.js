@@ -236,7 +236,7 @@ window.addEventListener("load", () => {
       lastY = moveEvent.offsetY;
     };
     downEvent.target.addEventListener("mousemove", mouseUpdate);
-    addEventListener(
+    document.addEventListener(
       "mouseup",
       (e) => {
         downEvent.target.removeEventListener("mousemove", mouseUpdate);
