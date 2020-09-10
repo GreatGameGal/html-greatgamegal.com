@@ -1,4 +1,4 @@
-import { map } from "/functions.js";
+import { map } from "/js/functions.js";
 
 const contentDiv = document.getElementById("mainContent");
 const canvas = document.getElementById("mandelbrotCanvas");
