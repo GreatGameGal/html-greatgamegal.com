@@ -19,7 +19,7 @@ class Mandelbrot {
   constructor(defaultScale = 3) {
     if (settingSaving && localStorage.mandelbrotStorage) {
       let data = JSON.parse(localStorage.mandelbrotStorage);
-      this.iterations_ = data.iterations || 100;
+      this.iterations_ = data.iterations || 200;
       iterationsValEl.value = this.iterations;
       this.limit_ = data.limit || 8;
       limitValEl.value = this.limit;
@@ -66,7 +66,7 @@ class Mandelbrot {
   }
 
   reset() {
-    this.iterations_ = 100;
+    this.iterations_ = 200;
     this.limit_ = 8;
     this.zoomVal_ = 1;
     this.xVal_ = 0;
@@ -194,7 +194,7 @@ window.addEventListener("load", () => {
   });
 
   iterationsValEl.addEventListener("change", () => {
-    renderer.iterations = parseFloat(iterationsValEl.value) || 100;
+    renderer.iterations = parseFloat(iterationsValEl.value) || 200;
   });
 
   limitValEl.addEventListener("change", () => {
