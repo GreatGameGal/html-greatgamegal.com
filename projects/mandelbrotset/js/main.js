@@ -1,4 +1,4 @@
-import { map } from "./functions.js";
+import { map } from "/functions.js";
 
 const contentDiv = document.getElementById("mainContent");
 const canvas = document.getElementById("mandelbrotCanvas");
@@ -176,29 +176,29 @@ class Mandelbrot {
 window.addEventListener("load", () => {
   if (!settingSaving) resetButtonEl.style.display = "none";
 
-  window.mandelbrot = new Mandelbrot();
+  window.renderer = new Mandelbrot();
 
   resetButtonEl.addEventListener("click", (e) => {
-    mandelbrot.reset();
+    renderer.reset();
   });
   xValEl.addEventListener("change", () => {
-    mandelbrot.xVal = parseFloat(xValEl.value) || 0;
+    renderer.xVal = parseFloat(xValEl.value) || 0;
   });
 
   yValEl.addEventListener("change", () => {
-    mandelbrot.yVal = parseFloat(yValEl.value) || 0;
+    renderer.yVal = parseFloat(yValEl.value) || 0;
   });
 
   zoomValEl.addEventListener("change", () => {
-    mandelbrot.zoomVal = parseFloat(zoomValEl.value) || 1;
+    renderer.zoomVal = parseFloat(zoomValEl.value) || 1;
   });
 
   iterationsValEl.addEventListener("change", () => {
-    mandelbrot.iterations = parseFloat(iterationsValEl.value) || 100;
+    renderer.iterations = parseFloat(iterationsValEl.value) || 100;
   });
 
   limitValEl.addEventListener("change", () => {
-    mandelbrot.limit = parseFloat(limitValEl.value) || 16;
+    renderer.limit = parseFloat(limitValEl.value) || 16;
   });
 
   window.addEventListener("mousemove", (e) => {
@@ -214,25 +214,25 @@ window.addEventListener("load", () => {
       const relX = moveEvent.pageX - rect.left;
       const relY = moveEvent.pageY - rect.top;
 
-      mandelbrot.xVal +=
+      renderer.xVal +=
         map(
           lastX - relX,
           -canvas.width,
           canvas.width,
-          -mandelbrot.defaultScale,
-          mandelbrot.defaultScale
-        ) / mandelbrot.zoomVal;
-      mandelbrot.yVal +=
+          -renderer.defaultScale,
+          renderer.defaultScale
+        ) / renderer.zoomVal;
+      renderer.yVal +=
         map(
           lastY - relY,
           -canvas.height,
           canvas.height,
-          -mandelbrot.defaultScale,
-          mandelbrot.defaultScale
-        ) / mandelbrot.zoomVal;
+          -renderer.defaultScale,
+          renderer.defaultScale
+        ) / renderer.zoomVal;
 
-      xValEl.value = mandelbrot.xVal;
-      yValEl.value = mandelbrot.yVal;
+      xValEl.value = renderer.xVal;
+      yValEl.value = renderer.yVal;
 
       lastX = relX;
       lastY = relY;
@@ -254,30 +254,30 @@ window.addEventListener("load", () => {
     const relY = mouseY - rect.top;
 
     if (e.deltaY < 0) {
-      if (mandelbrot.zoomVal >= 1) {
-        mandelbrot.xVal +=
+      if (renderer.zoomVal >= 1) {
+        renderer.xVal +=
           (((relX - canvas.width / 2) / canvas.width) * 2) /
-            mandelbrot.zoomVal || 0;
-        mandelbrot.yVal +=
+            renderer.zoomVal || 0;
+        renderer.yVal +=
           (((relY - canvas.height / 2) / canvas.height) * 2) /
-            mandelbrot.zoomVal || 0;
+            renderer.zoomVal || 0;
 
-        xValEl.value = mandelbrot.xVal;
-        yValEl.value = mandelbrot.yVal;
+        xValEl.value = renderer.xVal;
+        yValEl.value = renderer.yVal;
       }
 
-      mandelbrot.zoomVal += mandelbrot.zoomVal * 0.25;
+      renderer.zoomVal += renderer.zoomVal * 0.25;
     } else if (e.deltaY > 0) {
-      mandelbrot.zoomVal -= mandelbrot.zoomVal * 0.25;
+      renderer.zoomVal -= renderer.zoomVal * 0.25;
     }
 
-    if (mandelbrot.zoomVal == 0) mandelbrot.zoomVal = 1;
-    zoomValEl.value = mandelbrot.zoomVal;
+    if (renderer.zoomVal == 0) renderer.zoomVal = 1;
+    zoomValEl.value = renderer.zoomVal;
   });
 
   window.addEventListener("resize", () => {
-    mandelbrot.redraw();
+    renderer.redraw();
   });
 
-  mandelbrot.redraw();
+  renderer.redraw();
 });
