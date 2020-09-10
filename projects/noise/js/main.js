@@ -38,8 +38,8 @@ class noiseRender {
       for (let x = 0; x < dim; x++) {
         for (let y = 0; y < dim; y++) {
           let val = this.noiseGen.perlin(
-            (x + this.x * dim - dim / 2) / dim / this.z,
-            (y + this.y * dim - dim / 2) / dim / this.z,
+            ((x - dim/2) / dim / this.z + this.x) ,
+            ((y - dim/2) / dim / this.z+ this.y) ,
             0
           );
 
@@ -124,7 +124,7 @@ window.addEventListener("load", () => {
           canvas.width,
           -1,
           1
-        )
+        ) / renderer.z;
       renderer.y +=
         map(
           lastY - relY,
@@ -132,7 +132,7 @@ window.addEventListener("load", () => {
           canvas.height,
           -1,
           1
-        );
+        ) / renderer.z;
 
       xValEl.value = renderer.x;
       yValEl.value = renderer.y;
