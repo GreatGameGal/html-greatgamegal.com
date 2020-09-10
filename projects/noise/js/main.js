@@ -38,8 +38,8 @@ class noiseRender {
       for (let x = 0; x < dim; x++) {
         for (let y = 0; y < dim; y++) {
           let val = this.noiseGen.perlin(
-            ((x - dim/2) / dim / this.z + this.x) ,
-            ((y - dim/2) / dim / this.z+ this.y) ,
+            (x - dim / 2) / dim / this.z + this.x,
+            (y - dim / 2) / dim / this.z + this.y,
             0
           );
 
@@ -118,21 +118,9 @@ window.addEventListener("load", () => {
       const relY = moveEvent.pageY - rect.top;
 
       renderer.x +=
-        map(
-          lastX - relX,
-          -canvas.width,
-          canvas.width,
-          -1,
-          1
-        ) / renderer.z;
+        map(lastX - relX, -canvas.width, canvas.width, -1, 1) / renderer.z;
       renderer.y +=
-        map(
-          lastY - relY,
-          -canvas.height,
-          canvas.height,
-          -1,
-          1
-        ) / renderer.z;
+        map(lastY - relY, -canvas.height, canvas.height, -1, 1) / renderer.z;
 
       xValEl.value = renderer.x;
       yValEl.value = renderer.y;
@@ -152,10 +140,6 @@ window.addEventListener("load", () => {
 
   canvas.addEventListener("wheel", (e) => {
     e.preventDefault();
-    const rect = e.target.getBoundingClientRect();
-    const relX = e.pageX - rect.left;
-    const relY = e.pageY - rect.top;
-
     if (e.deltaY < 0) {
       renderer.z += renderer.z * 0.25;
     } else if (e.deltaY > 0) {
