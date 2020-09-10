@@ -15,26 +15,34 @@ const settingSaving = localStorage.prefs && JSON.parse(localStorage.prefs)["stor
   "mandelbrotStorage"
 ];
 
+const defaults = {
+  iterations: 200,
+  x: 0,
+  y: 0,
+  z: 1,
+  limit: 8
+}
+
 class Mandelbrot {
   constructor(defaultScale = 3) {
     if (settingSaving && localStorage.mandelbrotStorage) {
       let data = JSON.parse(localStorage.mandelbrotStorage);
-      this.iterations_ = data.iterations || 200;
+      this.iterations_ = data.iterations || defaults.iterations;
       iterationsValEl.value = this.iterations;
-      this.limit_ = data.limit || 8;
+      this.limit_ = data.limit || defaults.limit;
       limitValEl.value = this.limit;
-      this.zoomVal_ = data.zoom || 1;
-      zoomValEl.value = this.zoomVal;
-      this.xVal_ = data.x || 0;
-      xValEl.value = this.xVal;
-      this.yVal_ = data.y || 0;
-      yValEl.value = this.yVal;
+      this.z_ = data.zoom || defaults.z;
+      zoomValEl.value = this.z;
+      this.x_ = data.x || defaults.x;
+      xValEl.value = this.x;
+      this.y_ = data.y || defaults.y;
+      yValEl.value = this.y;
     } else {
-      this.iterations_ = 100;
-      this.limit_ = 8;
-      this.zoomVal_ = 1;
-      this.xVal_ = 0;
-      this.yVal_ = 0;
+      this.iterations_ = defaults.iterations;
+      this.limit_ = defaults.limit;
+      this.z_ = defaults.z;
+      this.x_ = defaults.x;
+      this.y_ = defaults.y;
     }
     if (settingSaving) {
       setInterval(() => {
@@ -43,9 +51,9 @@ class Mandelbrot {
           JSON.stringify({
             iterations: this.iterations,
             limit: this.limit,
-            zoom: this.zoomVal,
-            x: this.xVal,
-            y: this.yVal,
+            zoom: this.z,
+            x: this.x,
+            y: this.y,
           })
         );
       }, 1000);
@@ -66,11 +74,16 @@ class Mandelbrot {
   }
 
   reset() {
-    this.iterations_ = 200;
-    this.limit_ = 8;
-    this.zoomVal_ = 1;
-    this.xVal_ = 0;
-    this.yVal_ = 0;
+    this.iterations_ = defaults.iterations;
+    iterationsValEl.value = this.iterations_;
+    this.limit_ = defaults.limit;
+    limitValEl.value = this.limit_;
+    this.z_ = defaults.z;
+    zoomValEl.value = this.z_;
+    this.x_ = defaults.x;
+    xValEl.value = this.x_;
+    this.y_ = defaults.y;
+    yValEl.value = this.y_;
     this.redraw();
   }
 
@@ -96,17 +109,17 @@ class Mandelbrot {
               x,
               0,
               canvas.width,
-              -this.defaultScale / this.zoomVal,
-              this.defaultScale / this.zoomVal
-            ) + this.xVal;
+              -this.defaultScale / this.z,
+              this.defaultScale / this.z
+            ) + this.x;
           const b =
             map(
               y,
               0,
               canvas.width,
-              -this.defaultScale / this.zoomVal,
-              this.defaultScale / this.zoomVal
-            ) + this.yVal;
+              -this.defaultScale / this.z,
+              this.defaultScale / this.z
+            ) + this.y;
           const mandelbrotVal = this.mandelbrotCalc(a, b);
           const mappedMandelVal = map(
             mandelbrotVal,
@@ -145,31 +158,31 @@ class Mandelbrot {
     return this.iterations_;
   }
 
-  set xVal(val) {
-    this.xVal_ = val;
+  set x(val) {
+    this.x_ = val;
     this.redraw();
   }
 
-  set yVal(val) {
-    this.yVal_ = val;
+  set y(val) {
+    this.y_ = val;
     this.redraw();
   }
 
-  set zoomVal(val) {
-    this.zoomVal_ = val;
+  set z(val) {
+    this.z_ = val;
     this.redraw();
   }
 
-  get xVal() {
-    return this.xVal_;
+  get x() {
+    return this.x_;
   }
 
-  get yVal() {
-    return this.yVal_;
+  get y() {
+    return this.y_;
   }
 
-  get zoomVal() {
-    return this.zoomVal_;
+  get z() {
+    return this.z_;
   }
 }
 
@@ -182,23 +195,23 @@ window.addEventListener("load", () => {
     renderer.reset();
   });
   xValEl.addEventListener("change", () => {
-    renderer.xVal = parseFloat(xValEl.value) || 0;
+    renderer.x = parseFloat(xValEl.value) || defaults.x;
   });
 
   yValEl.addEventListener("change", () => {
-    renderer.yVal = parseFloat(yValEl.value) || 0;
+    renderer.y = parseFloat(yValEl.value) || defaults.y;
   });
 
   zoomValEl.addEventListener("change", () => {
-    renderer.zoomVal = parseFloat(zoomValEl.value) || 1;
+    renderer.z = parseFloat(zoomValEl.value) || defaults.z;
   });
 
   iterationsValEl.addEventListener("change", () => {
-    renderer.iterations = parseFloat(iterationsValEl.value) || 200;
+    renderer.iterations = parseFloat(iterationsValEl.value) || defaults.iterations;
   });
 
   limitValEl.addEventListener("change", () => {
-    renderer.limit = parseFloat(limitValEl.value) || 16;
+    renderer.limit = parseFloat(limitValEl.value) || defaults.limit;
   });
 
   window.addEventListener("mousemove", (e) => {
@@ -212,25 +225,25 @@ window.addEventListener("load", () => {
     let lastY = downEvent.offsetY;
     const mouseUpdate = (moveEvent) => {
 
-      renderer.xVal +=
+      renderer.x +=
         map(
           lastX - moveEvent.offsetX,
           -canvas.width,
           canvas.width,
           -renderer.defaultScale,
           renderer.defaultScale
-        ) / renderer.zoomVal;
-      renderer.yVal +=
+        ) / renderer.z;
+      renderer.y +=
         map(
           lastY - moveEvent.offsetY,
           -canvas.height,
           canvas.height,
           -renderer.defaultScale,
           renderer.defaultScale
-        ) / renderer.zoomVal;
+        ) / renderer.z;
 
-      xValEl.value = renderer.xVal;
-      yValEl.value = renderer.yVal;
+      xValEl.value = renderer.x;
+      yValEl.value = renderer.y;
 
       lastX = moveEvent.offsetX;
       lastY = moveEvent.offsetY;
@@ -248,25 +261,25 @@ window.addEventListener("load", () => {
   canvas.addEventListener("wheel", (e) => {
     e.preventDefault();
     if (e.deltaY < 0) {
-      if (renderer.zoomVal >= 1) {
-        renderer.xVal +=
+      if (renderer.z >= 1) {
+        renderer.x +=
           (((e.offsetX - canvas.width / 2) / canvas.width) * 2) /
-            renderer.zoomVal || 0;
-        renderer.yVal +=
+            renderer.z || 0;
+        renderer.y +=
           (((e.offsetY - canvas.height / 2) / canvas.height) * 2) /
-            renderer.zoomVal || 0;
+            renderer.z || 0;
 
-        xValEl.value = renderer.xVal;
-        yValEl.value = renderer.yVal;
+        xValEl.value = renderer.x;
+        yValEl.value = renderer.y;
       }
 
-      renderer.zoomVal += renderer.zoomVal * 0.25;
+      renderer.z += renderer.z * 0.25;
     } else if (e.deltaY > 0) {
-      renderer.zoomVal -= renderer.zoomVal * 0.25;
+      renderer.z -= renderer.z * 0.25;
     }
 
-    if (renderer.zoomVal == 0) renderer.zoomVal = 1;
-    zoomValEl.value = renderer.zoomVal;
+    if (renderer.z == 0) renderer.z = 1;
+    zoomValEl.value = renderer.z;
   });
 
   window.addEventListener("resize", () => {
