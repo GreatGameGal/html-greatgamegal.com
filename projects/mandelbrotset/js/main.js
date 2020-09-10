@@ -208,15 +208,13 @@ window.addEventListener("load", () => {
 
   canvas.addEventListener("mousedown", (downEvent) => {
     const rect = downEvent.target.getBoundingClientRect();
-    let lastX = downEvent.pageX - rect.left;
-    let lastY = downEvent.pageY - rect.top;
+    let lastX = downEvent.offsetX;
+    let lastY = downEvent.offsetY;
     const mouseUpdate = (moveEvent) => {
-      const relX = moveEvent.pageX - rect.left;
-      const relY = moveEvent.pageY - rect.top;
 
       renderer.xVal +=
         map(
-          lastX - relX,
+          lastX - moveEvent.offsetX,
           -canvas.width,
           canvas.width,
           -renderer.defaultScale,
@@ -224,7 +222,7 @@ window.addEventListener("load", () => {
         ) / renderer.zoomVal;
       renderer.yVal +=
         map(
-          lastY - relY,
+          lastY - moveEvent.offsetY,
           -canvas.height,
           canvas.height,
           -renderer.defaultScale,
@@ -234,8 +232,8 @@ window.addEventListener("load", () => {
       xValEl.value = renderer.xVal;
       yValEl.value = renderer.yVal;
 
-      lastX = relX;
-      lastY = relY;
+      lastX = moveEvent.offsetX;
+      lastY = moveEvent.offsetY;
     };
     downEvent.target.addEventListener("mousemove", mouseUpdate);
     addEventListener(
@@ -249,17 +247,13 @@ window.addEventListener("load", () => {
 
   canvas.addEventListener("wheel", (e) => {
     e.preventDefault();
-    const rect = e.target.getBoundingClientRect();
-    const relX = mouseX - rect.left;
-    const relY = mouseY - rect.top;
-
     if (e.deltaY < 0) {
       if (renderer.zoomVal >= 1) {
         renderer.xVal +=
-          (((relX - canvas.width / 2) / canvas.width) * 2) /
+          (((e.offsetX - canvas.width / 2) / canvas.width) * 2) /
             renderer.zoomVal || 0;
         renderer.yVal +=
-          (((relY - canvas.height / 2) / canvas.height) * 2) /
+          (((e.offsetY - canvas.height / 2) / canvas.height) * 2) /
             renderer.zoomVal || 0;
 
         xValEl.value = renderer.xVal;
