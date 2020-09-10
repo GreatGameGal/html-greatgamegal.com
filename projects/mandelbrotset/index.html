@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mandelbrot Set Render</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  </head>
+  <body>
+    <ul id="navBar">
+      <li><a href="/index.html">Home</a></li>
+      <li><a class="active" href="/projects.html">Projects</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li style="float: right; border-right: none; border-left: 1px solid #555">
+        <a href="/about.html">About</a>
+      </li>
+      <li style="float: right; border-right: none; border-left: 1px solid #555">
+        <a href="/settings.html">Settings</a>
+      </li>
+    </ul>
+    <div id="mainContent" style="text-align: center">
+      <h1 style="text-align: center">Mandelbrot Set</h1>
+      <canvas id="mandelbrotCanvas"></canvas>
+      <br />
+      <input type="number" placeholder="Iterations" id="iterationsVal" />
+      <input type="number" placeholder="X Mod" id="xVal" />
+      <input type="number" placeholder="Zoom" id="zoomVal" />
+      <input type="number" placeholder="Y Mod" id="yVal" />
+      <input type="number" placeholder='"Towards Infinity"' id="limitVal" />
+      <br />
+      <button id="reset">Reset</button>
+    </div>
+    <script type="module" text="reset" src="js/main.js"></script>
+  </body>
+</html>

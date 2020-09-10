@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+  </head>
+  <body>
+    <ul id="navBar">
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="/projects.html">Projects</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li style="float: right; border-right: none; border-left: 1px solid #555">
+        <a href="/about.html">About</a>
+      </li>
+      <li
+        class="active"
+        style="float: right; border-right: none; border-left: 1px solid #555"
+      >
+        <a href="/settings.html">Settings</a>
+      </li>
+    </ul>
+    <div id="mainContent" style="display:flex;flex-flow:column;">
+      <label class="container">
+        Preference Storage
+        <input type="checkbox" id="preferenceStorage" />
+        <span class="checkmark"></span>
+      </label>
+      <h2>Storage Options</h2>
+      <div id="storageOptions" style="background: #262830;flex: 1;"></div>
+      
+
+    </div>
+
+    <script type="module" src="js/settings.js"></script>
+  </body>
+</html>
