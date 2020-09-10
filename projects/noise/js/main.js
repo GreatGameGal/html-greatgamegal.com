@@ -1,6 +1,6 @@
 import { Random } from "/js/random.js";
 import { Noise } from "/js/noise.js";
-import {map} from "/js/functions.js"
+import { map } from "/js/functions.js";
 
 const contentDiv = document.getElementById("mainContent");
 const canvas = document.getElementById("contentCanvas");
@@ -15,7 +15,6 @@ class noiseRender {
     this.x_ = 0;
     this.y_ = 0;
     this.z_ = 1;
-    this.defaultScale = 1;
     this.seed_ = seed;
     this.noiseGen = new Noise(seed);
     this.redraw();
@@ -39,8 +38,8 @@ class noiseRender {
       for (let x = 0; x < dim; x++) {
         for (let y = 0; y < dim; y++) {
           let val = this.noiseGen.perlin(
-            (((x+this.x * dim)-dim/2) / dim) * this.defaultScale / this.z,
-            (((y+this.y * dim)-dim/2) / dim) * this.defaultScale / this.z,
+            (x + this.x * dim - dim / 2) / dim / this.z,
+            (y + this.y * dim - dim / 2) / dim / this.z,
             0
           );
 
@@ -123,17 +122,17 @@ window.addEventListener("load", () => {
           lastX - relX,
           -canvas.width,
           canvas.width,
-          -renderer.z,
-          renderer.z
-        ) / renderer.z;
+          -1,
+          1
+        )
       renderer.y +=
         map(
           lastY - relY,
           -canvas.height,
           canvas.height,
-          -renderer.z,
-          renderer.z
-        ) / renderer.z;
+          -1,
+          1
+        );
 
       xValEl.value = renderer.x;
       yValEl.value = renderer.y;
