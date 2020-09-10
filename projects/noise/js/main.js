@@ -39,8 +39,8 @@ class noiseRender {
       for (let x = 0; x < dim; x++) {
         for (let y = 0; y < dim; y++) {
           let val = this.noiseGen.perlin(
-            ((x) / dim + this.x) * this.defaultScale / this.z,
-            ((y) / dim+this.y) * this.defaultScale / this.z,
+            (((x+this.x * dim)-dim/2) / dim) * this.defaultScale / this.z,
+            (((y+this.y * dim)-dim/2) / dim) * this.defaultScale / this.z,
             0
           );
 
