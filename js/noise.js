@@ -264,7 +264,16 @@ for (let i = Permutation.length; i >= 0; i--) {
 
 class Noise {
   constructor(seed = 0) {
-    this.seed = seed
+    this.random = new Random(seed);
+    this.seed_ = seed
+  }
+
+  set seed (val) {
+    this.random.seed = val;
+  }
+
+  get seed () {
+    return this.random.seed;
   }
 
   perlinOctave(x, y, z, octaves, persistence) {
