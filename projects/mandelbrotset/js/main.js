@@ -20,7 +20,7 @@ const defaults = {
   x: 0,
   y: 0,
   z: 1,
-  limit: 8
+  limit: 2
 }
 
 class Mandelbrot {
@@ -61,14 +61,19 @@ class Mandelbrot {
     this.defaultScale = defaultScale;
   }
 
-  mandelbrotCalc(ca, cb) {
-    let a = ca;
-    let b = cb;
-    for (let i = 0; i < this.iterations; i++) {
-      const tempA = a * a - b * b + ca;
-      b = 2 * a * b + cb;
-      a = tempA;
-      if (Math.abs(a + b) > this.limit) return i;
+  mandelbrotCalc(x0, y0) {
+    let y1 = 0
+    let x1 = 0
+    let x2 = 0;
+    let y2 = 0;
+    let w = 0;
+    for (let i = 0; i < this.iterations+1; i++) {
+      x1 = x2-y2+x0;
+      y1 = w-x2-y2+ y0;
+      x2 = x1*x1;
+      y2 = y1*y1
+      w = (x1+y1) * (x1+y1)
+      if (Math.abs(x1 + y1) > this.limit) return i-1;
     }
     return this.iterations;
   }
@@ -130,9 +135,9 @@ class Mandelbrot {
           );
           const index = (y * canvas.width + x) * 4;
 
-          data[index] = mappedMandelVal;
-          data[index + 1] = mappedMandelVal;
-          data[index + 2] = mappedMandelVal;
+          data[index] = mappedMandelVal%255;
+          data[index + 1] = mappedMandelVal%255;
+          data[index + 2] = mappedMandelVal%255;
           data[index + 3] = 255;
         }
       }
