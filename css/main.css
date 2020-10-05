@@ -5,7 +5,6 @@ body {
   flex-flow: column;
   height: 100vh;
   display: flex;
-
 }
 
 h1,
@@ -37,19 +36,18 @@ footer {
 }
 
 #navBar {
-  height: 2em;
   top: 0;
   left: 0;
   right: 0;
   margin: 0;
   padding: 0;
+  height: 2em;
+  font-size: 20px;
   overflow: hidden;
-  position: -webkit-sticky; /* Safari */
   position: sticky;
   list-style-type: none;
-
+  position: -webkit-sticky;
   background-color: #202224;
-  font-size: 20px;
 }
 
 #navBar li {
@@ -81,14 +79,12 @@ input {
 button {
   color: #444;
   background-color: #f0f0f0;
-
 }
 
 ::placeholder {
   color: #d0d0d0;
   text-align: center;
 }
-
 
 .container.disabled > .checkmark,
 .container.disabled:hover > .checkmark {
@@ -98,8 +94,6 @@ button {
 .container.disabled {
   cursor: default;
 }
-
-
 
 .container {
   display: block;
@@ -132,16 +126,13 @@ button {
   background-color: #eee;
 }
 
-
 .container:hover input ~ .checkmark {
   background-color: #ccc;
 }
 
-
 .container input:checked ~ .checkmark {
   background-color: #2196f3;
 }
-
 
 .checkmark:after {
   content: "";
@@ -164,4 +155,3 @@ button {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
-
