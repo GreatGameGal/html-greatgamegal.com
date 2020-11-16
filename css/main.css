@@ -1,5 +1,5 @@
 body {
-  background-color: #303438;
+  background-color: #303032;
   color: #f0f0f0;
   margin: 0;
   flex-flow: column;
@@ -15,7 +15,7 @@ h3 {
 
 a,
 a:visited {
-  color: #3bd;
+  color: #20c0dc;
 }
 
 div {
@@ -47,7 +47,7 @@ footer {
   position: sticky;
   list-style-type: none;
   position: -webkit-sticky;
-  background-color: #202224;
+  background-color: #202022;
 }
 
 #navBar li {
