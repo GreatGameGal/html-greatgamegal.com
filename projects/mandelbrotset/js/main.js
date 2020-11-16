@@ -9,19 +9,19 @@ const iterationsValEl = document.getElementById("iterationsVal");
 const limitValEl = document.getElementById("limitVal");
 const resetButtonEl = document.getElementById("reset");
 
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: false });
 
-const settingSaving = localStorage.prefs && JSON.parse(localStorage.prefs)["storage"][
-  "mandelbrotStorage"
-];
+const settingSaving =
+  localStorage.prefs &&
+  JSON.parse(localStorage.prefs)["storage"]["mandelbrotStorage"];
 
 const defaults = {
   iterations: 200,
   x: 0,
   y: 0,
   z: 1,
-  limit: 2
-}
+  limit: 2,
+};
 
 class Mandelbrot {
   constructor(defaultScale = 3) {
@@ -62,18 +62,18 @@ class Mandelbrot {
   }
 
   mandelbrotCalc(x0, y0) {
-    let y1 = 0
-    let x1 = 0
+    let y1 = 0;
+    let x1 = 0;
     let x2 = 0;
     let y2 = 0;
     let w = 0;
-    for (let i = 0; i < this.iterations+1; i++) {
-      x1 = x2-y2+x0;
-      y1 = w-x2-y2+ y0;
-      x2 = x1*x1;
-      y2 = y1*y1
-      w = (x1+y1) * (x1+y1)
-      if (Math.abs(x1 + y1) > this.limit) return i-1;
+    for (let i = 0; i < this.iterations + 1; i++) {
+      x1 = x2 - y2 + x0;
+      y1 = w - x2 - y2 + y0;
+      x2 = x1 * x1;
+      y2 = y1 * y1;
+      w = (x1 + y1) * (x1 + y1);
+      if (Math.abs(x1 + y1) > this.limit) return i - 1;
     }
     return this.iterations;
   }
@@ -135,9 +135,9 @@ class Mandelbrot {
           );
           const index = (y * canvas.width + x) * 4;
 
-          data[index] = mappedMandelVal%255;
-          data[index + 1] = mappedMandelVal%255;
-          data[index + 2] = mappedMandelVal%255;
+          data[index] = mappedMandelVal % 255;
+          data[index + 1] = mappedMandelVal % 255;
+          data[index + 2] = mappedMandelVal % 255;
           data[index + 3] = 255;
         }
       }
@@ -212,7 +212,8 @@ window.addEventListener("load", () => {
   });
 
   iterationsValEl.addEventListener("change", () => {
-    renderer.iterations = parseFloat(iterationsValEl.value) || defaults.iterations;
+    renderer.iterations =
+      parseFloat(iterationsValEl.value) || defaults.iterations;
   });
 
   limitValEl.addEventListener("change", () => {
@@ -229,7 +230,6 @@ window.addEventListener("load", () => {
     let lastX = downEvent.offsetX;
     let lastY = downEvent.offsetY;
     const mouseUpdate = (moveEvent) => {
-
       renderer.x +=
         map(
           lastX - moveEvent.offsetX,
@@ -268,8 +268,8 @@ window.addEventListener("load", () => {
     if (e.deltaY < 0) {
       if (renderer.z >= 1) {
         renderer.x +=
-          (((e.offsetX - canvas.width / 2) / canvas.width) * 2) /
-            renderer.z || 0;
+          (((e.offsetX - canvas.width / 2) / canvas.width) * 2) / renderer.z ||
+          0;
         renderer.y +=
           (((e.offsetY - canvas.height / 2) / canvas.height) * 2) /
             renderer.z || 0;
