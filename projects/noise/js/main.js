@@ -2,7 +2,6 @@ import { Random } from "/js/random.js";
 import { Noise } from "/js/noise.js";
 import { map } from "/js/functions.js";
 
-const contentDiv = document.getElementById("mainContent");
 const canvas = document.getElementById("contentCanvas");
 const ctx = canvas.getContext("2d");
 const xValEl = document.getElementById("xVal");
@@ -25,8 +24,8 @@ class noiseRender {
       clearTimeout(this.redrawTimeout);
     }
     this.redrawTimeout = setTimeout(() => {
-      const width = contentDiv.offsetWidth - 16;
-      const height = contentDiv.offsetHeight * 0.85 - 16;
+      const width = canvas.parentNode.offsetWidth - 16;
+      const height = canvas.parentNode.offsetHeight * 0.85 - 16;
       const dim = width > height ? height : width;
       if (canvas.width != dim) {
         canvas.width = dim;
