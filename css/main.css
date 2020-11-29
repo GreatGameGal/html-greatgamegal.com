@@ -22,7 +22,7 @@ div {
   flex: 1;
 }
 
-#mainContent {
+main {
   position: static;
   overflow: auto;
   margin: 8px;
