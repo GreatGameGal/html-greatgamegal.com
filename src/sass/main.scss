@@ -35,7 +35,7 @@ footer {
   background-color: #242628;
 }
 
-#navBar {
+nav ul {
   top: 0;
   left: 0;
   right: 0;
@@ -50,12 +50,13 @@ footer {
   background-color: #202022;
 }
 
-#navBar li {
+nav li {
   float: left;
   border-right: 1px solid #555;
 }
 
-#navBar a {
+nav a,
+nav a:visited {
   display: block;
   padding: 8px;
   color: #f0f0f0;
@@ -63,12 +64,12 @@ footer {
   text-align: center;
 }
 
-#navBar a:hover {
+nav a:hover {
   background-color: #282930;
 }
 
-#navBar .active,
-#navBar .active:hover {
+nav .active,
+nav .active:hover {
   background-color: #555;
 }
 

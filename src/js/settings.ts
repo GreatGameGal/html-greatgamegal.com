@@ -3,14 +3,18 @@ const storageOpts = [
   ["mandelbrotStorage", "Mandelbrot Setting Storage"],
 ];
 
-function createPreferenceBox(parent, labelText, id) {
+function createPreferenceBox(
+  parent: HTMLElement,
+  labelText: string,
+  id: string
+) {
   const labelEl = document.createElement("label");
   labelEl.className = "container";
   labelEl.append(labelText);
   const checkBoxEl = document.createElement("input");
   checkBoxEl.type = "checkbox";
   checkBoxEl.id = id;
-  if (localStorage.prefs)
+  if (localStorage.prefs !== undefined)
     checkBoxEl.checked = JSON.parse(localStorage.prefs)["storage"][id] || false;
   labelEl.append(checkBoxEl);
   const checkmarkEl = document.createElement("span");
@@ -23,22 +27,33 @@ function createPreferenceBox(parent, labelText, id) {
   };
 }
 
-let checkboxes = [];
+const checkboxes: Array<{
+  label: HTMLLabelElement;
+  checkbox: HTMLInputElement;
+}> = [];
 
 window.addEventListener("load", () => {
-  const prefStoreEl = document.getElementById("preferenceStorage");
-  prefStoreEl.checked = Boolean(localStorage.prefs);
+  const prefStoreEl = <HTMLInputElement>(
+    document.getElementById("preferenceStorage")
+  );
+  if (prefStoreEl == null) return;
+  prefStoreEl.checked = localStorage.prefs !== undefined;
 
   prefStoreEl.addEventListener("change", (e) => {
-    if (e.target.checked) {
+    const target = <HTMLInputElement>e.target;
+    if (
+      target !== undefined &&
+      target.checked !== undefined &&
+      target.checked
+    ) {
       localStorage.setItem("prefs", JSON.stringify({ storage: {} }));
-      for (let box of checkboxes) {
+      for (const box of checkboxes) {
         box.checkbox.disabled = false;
         box.label.classList.remove("disabled");
       }
     } else {
       localStorage.removeItem("prefs");
-      for (let box of checkboxes) {
+      for (const box of checkboxes) {
         box.checkbox.disabled = true;
         box.label.classList.add("disabled");
       }
@@ -46,17 +61,20 @@ window.addEventListener("load", () => {
   });
 
   const storageOptsDiv = document.getElementById("storageOptions");
-  for (let opt of storageOpts) {
+  if (storageOptsDiv === null) return;
+  for (const opt of storageOpts) {
     const box = createPreferenceBox(storageOptsDiv, opt[1], opt[0]);
     box.checkbox.disabled = !prefStoreEl.checked;
     if (!prefStoreEl.checked) {
       box.label.classList.add("disabled");
     }
     box.checkbox.addEventListener("change", (e) => {
+      const target = <HTMLInputElement>e.target;
+      if (target == null || target.checked == null) return;
       const prefs = JSON.parse(localStorage.prefs);
-      prefs.storage[e.target.id] = e.target.checked;
+      prefs.storage[target.id] = target.checked;
       localStorage.setItem("prefs", JSON.stringify(prefs));
-      if (!e.target.checked) localStorage.removeItem(e.target.id)
+      if (!target.checked) localStorage.removeItem(target.id);
     });
     checkboxes.push(box);
   }
