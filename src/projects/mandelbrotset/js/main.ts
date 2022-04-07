@@ -254,7 +254,7 @@ if (
     });
 
     canvas.addEventListener("mousedown", (downEvent: MouseEvent) => {
-      if (downEvent.button != 1) return;
+      if (downEvent.button != 0) return;
       const downEventTarget = downEvent.target;
       if (downEventTarget == null) return;
       let lastX = downEvent.offsetX;
