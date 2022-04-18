@@ -1,0 +1,38 @@
+nav {
+  ul {
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    height: 2em;
+    font-size: 20px;
+    overflow: hidden;
+    position: sticky;
+    list-style-type: none;
+    background-color: #202022;
+  }
+
+  li {
+    float: left;
+    border-right: 1px solid #555;
+  }
+
+  a,
+  a:visited {
+    display: block;
+    padding: 8px;
+    color: #f0f0f0;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  a:hover {
+    background-color: #282930;
+  }
+
+  .active,
+  .active:hover {
+    background-color: #555;
+  }
+}
