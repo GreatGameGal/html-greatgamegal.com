@@ -4,21 +4,21 @@ class Noise {
   private random: Random;
   permutation: Int8Array;
 
-  constructor(seed = 0) {
+  constructor (seed = 0) {
     this.random = new Random(seed) || Math.random;
     this.setSeed(seed);
     this.permutation = Noise.createPermutation(256, this.random);
   }
 
-  setSeed(seed: number) {
+  setSeed (seed: number) {
     this.random.setSeed(seed);
   }
 
-  getSeed() {
+  getSeed () {
     return this.random.getSeed();
   }
 
-  perlinOctave(
+  perlinOctave (
     x: number,
     y: number,
     z: number,
@@ -42,7 +42,7 @@ class Noise {
     return total / maxVal;
   }
 
-  perlin(x = 0, y = 0, z = 0) {
+  perlin (x = 0, y = 0, z = 0) {
     const xi = Math.floor(x) & 255,
       yi = Math.floor(y) & 255,
       zi = Math.floor(z) & 255;
@@ -57,12 +57,12 @@ class Noise {
 
     const p = this.permutation;
     const aaa = p[p[p[xi] + yi] + zi],
-      aba = p[p[p[xi] + yi + 1] + zi],
       aab = p[p[p[xi] + yi] + zi + 1],
+      aba = p[p[p[xi] + yi + 1] + zi],
       abb = p[p[p[xi] + yi + 1] + zi + 1],
       baa = p[p[p[xi + 1] + yi] + zi],
-      bba = p[p[p[xi + 1] + yi + 1] + zi],
       bab = p[p[p[xi + 1] + yi] + zi + 1],
+      bba = p[p[p[xi + 1] + yi + 1] + zi],
       bbb = p[p[p[xi + 1] + yi + 1] + zi + 1];
 
     let x1 = this.lerp(this.grad(aaa, x, y, z), this.grad(baa, x - 1, y, z), u);
@@ -88,11 +88,11 @@ class Noise {
     return (this.lerp(y1, y2, w) + 1) / 2;
   }
 
-  lerp(a: number, b: number, x: number) {
+  lerp (a: number, b: number, x: number) {
     return a + x * (b - a);
   }
 
-  grad(hash: number, x: number, y: number, z: number) {
+  grad (hash: number, x: number, y: number, z: number) {
     switch (hash & 0xf) {
       case 0x0:
         return x + y;
@@ -131,23 +131,23 @@ class Noise {
     }
   }
 
-  fade(t: number) {
+  fade (t: number) {
     return t * t * t * (t * (t * 6 - 15) + 10);
   }
 
-  static createPermutation(size = 256, randomBase: Math | Random = Math) {
+  static createPermutation (size = 256, randomBase: Math | Random = Math) {
     const perm = new Int8Array(size * 2);
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < size; i++)
       perm[i] = i;
-    }
+
     // Shuffle
     for (let i = size; i > 0; i--) {
       const j = Math.floor(randomBase.random() * i);
-      [[perm[i]], [perm[j]]] = [[perm[j]], [perm[i]]];
+      [ [ perm[i] ], [ perm[j] ] ] = [ [ perm[j] ], [ perm[i] ] ];
     }
-    for (let i = size; i >= 0; i--) {
+    for (let i = size; i >= 0; i--)
       perm[i + size] = perm[i];
-    }
+
     return perm;
   }
 }

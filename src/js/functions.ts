@@ -1,4 +1,4 @@
-function map(
+function map (
   val: number,
   valMin: number,
   valMax: number,
@@ -6,7 +6,7 @@ function map(
   returnMax: number
 ) {
   return (
-    ((val - valMin) / (valMax - valMin)) * (returnMax - returnMin) + returnMin
+    (val - valMin) / (valMax - valMin) * (returnMax - returnMin) + returnMin
   );
 }
 

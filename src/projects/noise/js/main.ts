@@ -24,7 +24,7 @@ if (
     noiseGen: Noise;
     redrawTimeout: number | null;
 
-    constructor(seed?: number) {
+    constructor (seed?: number) {
       this.redrawTimeout = null;
       this.x = 0;
       this.y = 0;
@@ -34,13 +34,14 @@ if (
       this.redraw();
     }
 
-    redraw() {
-      if (this.redrawTimeout) {
+    redraw () {
+      if (this.redrawTimeout)
         clearTimeout(this.redrawTimeout);
-      }
+
       this.redrawTimeout = setTimeout(() => {
         const parentNode = <HTMLDivElement>canvas.parentNode;
-        if (parentNode == null) return;
+        if (parentNode == null)
+          return;
         const width = parentNode.offsetWidth - 16;
         const height = parentNode.offsetHeight * 0.85 - 16;
         const dim = width > height ? height : width;
@@ -75,38 +76,38 @@ if (
       }, 10);
     }
 
-    setSeed(seed: number) {
+    setSeed (seed: number) {
       this.seed = seed;
       seedValEl.value = seed.toString();
       this.noiseGen = new Noise(seed);
       this.redraw();
     }
-    setX(x: number) {
+    setX (x: number) {
       this.x = x;
       xValEl.value = x.toString();
       this.redraw();
     }
-    setY(y: number) {
+    setY (y: number) {
       this.y = y;
       yValEl.value = y.toString();
       this.redraw();
     }
-    setZ(z: number) {
+    setZ (z: number) {
       this.z = z;
       zValEl.value = z.toString();
       this.redraw();
     }
 
-    getSeed() {
+    getSeed () {
       return this.seed;
     }
-    getX() {
+    getX () {
       return this.x;
     }
-    getY() {
+    getY () {
       return this.y;
     }
-    getZ() {
+    getZ () {
       return this.z;
     }
   }
@@ -132,7 +133,8 @@ if (
 
     canvas.addEventListener("mousedown", (downEvent: MouseEvent) => {
       const downTarget = <HTMLElement>downEvent.target;
-      if (downTarget == null) return;
+      if (downTarget == null)
+        return;
 
       const rect = downTarget.getBoundingClientRect();
       let lastX = downEvent.pageX - rect.left;
@@ -141,16 +143,12 @@ if (
         const relX = moveEvent.pageX - rect.left;
         const relY = moveEvent.pageY - rect.top;
 
-        renderer.setX(
-          renderer.getX() +
+        renderer.setX(renderer.getX() +
             map(lastX - relX, -canvas.width, canvas.width, -1, 1) /
-              renderer.getZ()
-        );
-        renderer.setY(
-          renderer.getY() +
+              renderer.getZ());
+        renderer.setY(renderer.getY() +
             map(lastY - relY, -canvas.height, canvas.height, -1, 1) /
-              renderer.getZ()
-        );
+              renderer.getZ());
 
         xValEl.value = renderer.getX().toString();
         yValEl.value = renderer.getY().toString();
@@ -170,13 +168,14 @@ if (
 
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
-      if (e.deltaY < 0) {
+      if (e.deltaY < 0)
         renderer.setZ(renderer.getZ() * 1.25);
-      } else if (e.deltaY > 0) {
+      else if (e.deltaY > 0)
         renderer.setZ(renderer.getZ() * 0.75);
-      }
 
-      if (renderer.getZ() == 0) renderer.setZ(1);
+
+      if (renderer.getZ() == 0)
+        renderer.setZ(1);
     });
 
     window.addEventListener("resize", () => {

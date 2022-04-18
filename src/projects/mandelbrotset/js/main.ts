@@ -39,7 +39,7 @@ if (
     defaultScale: number;
     redrawTimeout: number | null;
 
-    constructor(defaultScale = 3) {
+    constructor (defaultScale = 3) {
       this.data = new Float64Array(5);
       this.redrawTimeout = null;
 
@@ -79,7 +79,7 @@ if (
       this.defaultScale = defaultScale;
     }
 
-    mandelbrotCalc(x0: number, y0: number) {
+    mandelbrotCalc (x0: number, y0: number) {
       let y1 = 0;
       let x1 = 0;
       let x2 = 0;
@@ -91,12 +91,13 @@ if (
         x2 = x1 * x1;
         y2 = y1 * y1;
         w = (x1 + y1) * (x1 + y1);
-        if (Math.abs(x1 + y1) > this.getLimit()) return i - 1;
+        if (Math.abs(x1 + y1) > this.getLimit())
+          return i - 1;
       }
       return this.getIterations();
     }
 
-    reset() {
+    reset () {
       // Sets iterations
       this.data[0] = defaults.iterations;
       iterationsValEl.value = this.getIterations().toString();
@@ -120,13 +121,14 @@ if (
       this.redraw();
     }
 
-    redraw() {
-      if (this.redrawTimeout != null) {
+    redraw () {
+      if (this.redrawTimeout != null)
         clearTimeout(this.redrawTimeout);
-      }
+
       this.redrawTimeout = setTimeout(() => {
         const parentNode = <HTMLDivElement>canvas.parentNode;
-        if (parentNode == null) return;
+        if (parentNode == null)
+          return;
         const width = parentNode.offsetWidth - 16;
         const height = parentNode.offsetHeight * 0.85 - 16;
         const dim = width > height ? height : width;
@@ -134,7 +136,8 @@ if (
           canvas.width = dim;
           canvas.height = dim;
         }
-        if (ctx == null) return;
+        if (ctx == null)
+          return;
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
 
@@ -177,54 +180,55 @@ if (
       }, 10);
     }
 
-    setIterations(iterations: number) {
+    setIterations (iterations: number) {
       this.data[0] = iterations;
       this.redraw();
     }
 
-    getIterations() {
+    getIterations () {
       return this.data[0];
     }
 
-    setLimit(limit: number) {
+    setLimit (limit: number) {
       this.data[1] = limit;
       this.redraw();
     }
 
-    getLimit() {
+    getLimit () {
       return this.data[1];
     }
 
-    setX(x: number) {
+    setX (x: number) {
       this.data[2] = x;
       this.redraw();
     }
 
-    getX() {
+    getX () {
       return this.data[2];
     }
 
-    setY(y: number) {
+    setY (y: number) {
       this.data[3] = y;
       this.redraw();
     }
 
-    getY() {
+    getY () {
       return this.data[3];
     }
 
-    setZ(z: number) {
+    setZ (z: number) {
       this.data[4] = z;
       this.redraw();
     }
 
-    getZ() {
+    getZ () {
       return this.data[4];
     }
   }
 
   window.addEventListener("load", () => {
-    if (!settingSaving) resetButtonEl.style.display = "none";
+    if (!settingSaving)
+      resetButtonEl.style.display = "none";
 
     const renderer = new Mandelbrot();
 
@@ -244,9 +248,7 @@ if (
     });
 
     iterationsValEl.addEventListener("change", () => {
-      renderer.setIterations(
-        parseFloat(iterationsValEl.value) || defaults.iterations
-      );
+      renderer.setIterations(parseFloat(iterationsValEl.value) || defaults.iterations);
     });
 
     limitValEl.addEventListener("change", () => {
@@ -254,14 +256,15 @@ if (
     });
 
     canvas.addEventListener("mousedown", (downEvent: MouseEvent) => {
-      if (downEvent.button != 0) return;
+      if (downEvent.button != 0)
+        return;
       const downEventTarget = downEvent.target;
-      if (downEventTarget == null) return;
+      if (downEventTarget == null)
+        return;
       let lastX = downEvent.offsetX;
       let lastY = downEvent.offsetY;
       const mouseUpdate = (moveEvent: MouseEvent) => {
-        renderer.setX(
-          renderer.getX() +
+        renderer.setX(renderer.getX() +
             map(
               lastX - moveEvent.offsetX,
               -canvas.width,
@@ -269,10 +272,8 @@ if (
               -renderer.defaultScale,
               renderer.defaultScale
             ) /
-              renderer.getZ()
-        );
-        renderer.setY(
-          renderer.getY() +
+              renderer.getZ());
+        renderer.setY(renderer.getY() +
             map(
               lastY - moveEvent.offsetY,
               -canvas.height,
@@ -280,8 +281,7 @@ if (
               -renderer.defaultScale,
               renderer.defaultScale
             ) /
-              renderer.getZ()
-        );
+              renderer.getZ());
 
         xValEl.value = renderer.getX().toString();
         yValEl.value = renderer.getY().toString();
@@ -306,27 +306,24 @@ if (
       e.preventDefault();
       if (e.deltaY < 0) {
         if (renderer.getZ() >= 1) {
-          renderer.setX(
-            renderer.getX() +
-              (((e.offsetX - canvas.width / 2) / canvas.width) * 2) /
-                renderer.getZ() || 0
-          );
-          renderer.setY(
-            renderer.getY() +
-              (((e.offsetY - canvas.height / 2) / canvas.height) * 2) /
-                renderer.getZ() || 0
-          );
+          renderer.setX(renderer.getX() +
+              (e.offsetX - canvas.width / 2) / canvas.width * 2 /
+                renderer.getZ() || 0);
+          renderer.setY(renderer.getY() +
+              (e.offsetY - canvas.height / 2) / canvas.height * 2 /
+                renderer.getZ() || 0);
 
           xValEl.value = renderer.getX().toString();
           yValEl.value = renderer.getY().toString();
         }
 
         renderer.setZ(renderer.getZ() * 1.25);
-      } else if (e.deltaY > 0) {
+      } else if (e.deltaY > 0)
         renderer.setZ(renderer.getZ() * 0.75);
-      }
 
-      if (renderer.getZ() === 0) renderer.setZ(1);
+
+      if (renderer.getZ() === 0)
+        renderer.setZ(1);
       zoomValEl.value = renderer.getZ().toString();
     });
 
