@@ -127,7 +127,7 @@ if (
         clearTimeout(this.redrawTimeout);
       }
 
-      this.redrawTimeout = setTimeout(() => {
+      this.redrawTimeout = window.setTimeout(() => {
         const parentNode = <HTMLDivElement>canvas.parentNode;
         if (parentNode == null) {
           return;
