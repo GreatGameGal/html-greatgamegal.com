@@ -137,16 +137,18 @@ class Noise {
 
   static createPermutation (size = 256, randomBase: Math | Random = Math) {
     const perm = new Int8Array(size * 2);
-    for (let i = 0; i < size; i++)
+    for (let i = 0; i < size; i++) {
       perm[i] = i;
+    }
 
     // Shuffle
     for (let i = size; i > 0; i--) {
       const j = Math.floor(randomBase.random() * i);
       [ [ perm[i] ], [ perm[j] ] ] = [ [ perm[j] ], [ perm[i] ] ];
     }
-    for (let i = size; i >= 0; i--)
+    for (let i = size; i >= 0; i--) {
       perm[i + size] = perm[i];
+    }
 
     return perm;
   }

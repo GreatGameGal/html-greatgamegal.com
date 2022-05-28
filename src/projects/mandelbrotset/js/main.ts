@@ -91,8 +91,9 @@ if (
         x2 = x1 * x1;
         y2 = y1 * y1;
         w = (x1 + y1) * (x1 + y1);
-        if (Math.abs(x1 + y1) > this.getLimit())
+        if (Math.abs(x1 + y1) > this.getLimit()) {
           return i - 1;
+        }
       }
       return this.getIterations();
     }
@@ -122,13 +123,15 @@ if (
     }
 
     redraw () {
-      if (this.redrawTimeout != null)
+      if (this.redrawTimeout != null) {
         clearTimeout(this.redrawTimeout);
+      }
 
       this.redrawTimeout = setTimeout(() => {
         const parentNode = <HTMLDivElement>canvas.parentNode;
-        if (parentNode == null)
+        if (parentNode == null) {
           return;
+        }
         const width = parentNode.offsetWidth - 16;
         const height = parentNode.offsetHeight * 0.85 - 16;
         const dim = width > height ? height : width;
@@ -136,8 +139,9 @@ if (
           canvas.width = dim;
           canvas.height = dim;
         }
-        if (ctx == null)
+        if (ctx == null) {
           return;
+        }
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
 
@@ -227,8 +231,9 @@ if (
   }
 
   window.addEventListener("load", () => {
-    if (!settingSaving)
+    if (!settingSaving) {
       resetButtonEl.style.display = "none";
+    }
 
     const renderer = new Mandelbrot();
 
@@ -256,11 +261,13 @@ if (
     });
 
     canvas.addEventListener("mousedown", (downEvent: MouseEvent) => {
-      if (downEvent.button != 0)
+      if (downEvent.button != 0) {
         return;
+      }
       const downEventTarget = downEvent.target;
-      if (downEventTarget == null)
+      if (downEventTarget == null) {
         return;
+      }
       let lastX = downEvent.offsetX;
       let lastY = downEvent.offsetY;
       const mouseUpdate = (moveEvent: MouseEvent) => {
@@ -318,12 +325,14 @@ if (
         }
 
         renderer.setZ(renderer.getZ() * 1.25);
-      } else if (e.deltaY > 0)
+      } else if (e.deltaY > 0) {
         renderer.setZ(renderer.getZ() * 0.75);
+      }
 
 
-      if (renderer.getZ() === 0)
+      if (renderer.getZ() === 0) {
         renderer.setZ(1);
+      }
       zoomValEl.value = renderer.getZ().toString();
     });
 

@@ -35,13 +35,15 @@ if (
     }
 
     redraw () {
-      if (this.redrawTimeout)
+      if (this.redrawTimeout) {
         clearTimeout(this.redrawTimeout);
+      }
 
       this.redrawTimeout = setTimeout(() => {
         const parentNode = <HTMLDivElement>canvas.parentNode;
-        if (parentNode == null)
+        if (parentNode == null) {
           return;
+        }
         const width = parentNode.offsetWidth - 16;
         const height = parentNode.offsetHeight * 0.85 - 16;
         const dim = width > height ? height : width;
@@ -133,8 +135,9 @@ if (
 
     canvas.addEventListener("mousedown", (downEvent: MouseEvent) => {
       const downTarget = <HTMLElement>downEvent.target;
-      if (downTarget == null)
+      if (downTarget == null) {
         return;
+      }
 
       const rect = downTarget.getBoundingClientRect();
       let lastX = downEvent.pageX - rect.left;
@@ -168,14 +171,16 @@ if (
 
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
-      if (e.deltaY < 0)
+      if (e.deltaY < 0) {
         renderer.setZ(renderer.getZ() * 1.25);
-      else if (e.deltaY > 0)
+      } else if (e.deltaY > 0) {
         renderer.setZ(renderer.getZ() * 0.75);
+      }
 
 
-      if (renderer.getZ() == 0)
+      if (renderer.getZ() == 0) {
         renderer.setZ(1);
+      }
     });
 
     window.addEventListener("resize", () => {

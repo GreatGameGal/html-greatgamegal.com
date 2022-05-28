@@ -1,7 +1,4 @@
-const storageOpts = [
-  [ "gameStorage", "Game Data Storage" ],
-  [ "mandelbrotStorage", "Mandelbrot Setting Storage" ],
-];
+const storageOpts = [ [ "gameStorage", "Game Data Storage" ], [ "mandelbrotStorage", "Mandelbrot Setting Storage" ] ];
 
 function createPreferenceBox (
   parent: HTMLElement,
@@ -14,8 +11,9 @@ function createPreferenceBox (
   const checkBoxEl = document.createElement("input");
   checkBoxEl.type = "checkbox";
   checkBoxEl.id = id;
-  if (localStorage.prefs !== undefined)
+  if (localStorage.prefs !== undefined) {
     checkBoxEl.checked = JSON.parse(localStorage.prefs)["storage"][id] || false;
+  }
   labelEl.append(checkBoxEl);
   const checkmarkEl = document.createElement("span");
   checkmarkEl.className = "checkmark";
@@ -36,8 +34,9 @@ window.addEventListener("load", () => {
   const prefStoreEl = <HTMLInputElement>(
     document.getElementById("preferenceStorage")
   );
-  if (prefStoreEl == null)
+  if (prefStoreEl == null) {
     return;
+  }
   prefStoreEl.checked = localStorage.prefs !== undefined;
 
   prefStoreEl.addEventListener("change", (e) => {
@@ -62,23 +61,27 @@ window.addEventListener("load", () => {
   });
 
   const storageOptsDiv = document.getElementById("storageOptions");
-  if (storageOptsDiv === null)
+  if (storageOptsDiv === null) {
     return;
+  }
   for (const opt of storageOpts) {
     const box = createPreferenceBox(storageOptsDiv, opt[1], opt[0]);
     box.checkbox.disabled = !prefStoreEl.checked;
-    if (!prefStoreEl.checked)
+    if (!prefStoreEl.checked) {
       box.label.classList.add("disabled");
+    }
 
     box.checkbox.addEventListener("change", (e) => {
       const target = <HTMLInputElement>e.target;
-      if (target == null || target.checked == null)
+      if (target == null || target.checked == null) {
         return;
+      }
       const prefs = JSON.parse(localStorage.prefs);
       prefs.storage[target.id] = target.checked;
       localStorage.setItem("prefs", JSON.stringify(prefs));
-      if (!target.checked)
+      if (!target.checked) {
         localStorage.removeItem(target.id);
+      }
     });
     checkboxes.push(box);
   }
