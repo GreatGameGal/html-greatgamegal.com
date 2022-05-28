@@ -26,7 +26,7 @@
     "watch:resources": "onchange 'src/**/resources/**' -- npm-run-all clean:resources copy:resources",
     "watch": "npm-run-all --parallel 'watch:*'",
     "build:typescript": "tsc",
-    "build:sass": "sass --no-source-map src/sass:build/css",
+    "build:sass": "sass --no-source-map src:build",
     "build": "npm-run-all clean copy --parallel 'build:*'",
     "dev": "yarn run watch"
   },
