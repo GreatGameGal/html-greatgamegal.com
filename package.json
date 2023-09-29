@@ -28,7 +28,7 @@
     "watch": "npm-run-all --parallel 'watch:*'",
     "build:typescript": "tsc",
     "build": "npm-run-all clean copy --parallel 'build:*'",
-    "dev": "yarn run watch"
+    "dev": "bun run watch"
   },
   "dependencies": {
     "copyfiles": "^2.4.1",
