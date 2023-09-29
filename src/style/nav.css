@@ -1,5 +1,5 @@
 nav {
-  ul {
+  & ul {
     top: 0;
     left: 0;
     right: 0;
@@ -13,13 +13,13 @@ nav {
     background-color: #202022;
   }
 
-  li {
+  & li {
     float: left;
     border-right: 1px solid #555;
   }
 
-  a,
-  a:visited {
+  & a,
+  & a:visited {
     display: block;
     padding: 8px;
     color: #f0f0f0;
@@ -27,12 +27,12 @@ nav {
     text-align: center;
   }
 
-  a:hover {
+  & a:hover {
     background-color: #282930;
   }
 
-  .active,
-  .active:hover {
+  & .active,
+  & .active:hover {
     background-color: #555;
   }
 }

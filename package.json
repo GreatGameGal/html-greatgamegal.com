@@ -11,6 +11,7 @@
     "lintAndFix": "eslint --fix .",
     "copy:json": "copyfiles -u 1 'src/**/*.json' build",
     "copy:html": "copyfiles -u 1 'src/**/*.html' build",
+    "copy:css": "copyfiles -u 1 'src/**/*.css' build",
     "copy:resources": "copyfiles -u 1 -a 'src/**/resources/**' build",
     "copy": "npm-run-all --parallel 'copy:*'",
     "clean:css": " && rimraf build/**/*.css",
@@ -20,13 +21,11 @@
     "clean:resources": "rimraf 'build/**/resources'",
     "clean": "rimraf 'build/*'",
     "watch:ts": "onchange 'src/**/*.ts' 'src/**/*.js' -- npm-run-all clean:js lintAndFix build:typescript",
-    "watch:sass": "onchange 'src/**/*.scss' -- npm-run-all clean:css lintAndFix build:sass",
     "watch:html": "onchange 'src/**/*.html' 'src/**/*.htm' -- npm-run-all clean:html lintAndFix copy:html",
     "watch:json": "onchange 'src/**/*.json' -- npm-run-all clean:json lintAndFix copy:json",
     "watch:resources": "onchange 'src/**/resources/**' -- npm-run-all clean:resources copy:resources",
     "watch": "npm-run-all --parallel 'watch:*'",
     "build:typescript": "tsc",
-    "build:sass": "sass --no-source-map src:build",
     "build": "npm-run-all clean copy --parallel 'build:*'",
     "dev": "yarn run watch"
   },
@@ -35,7 +34,6 @@
     "npm-run-all": "^4.1.5",
     "onchange": "^7.1.0",
     "rimraf": "^3.0.2",
-    "sass": "^1.50.0",
     "typescript": "^4.6.3"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-@import "./nav";
+@import "./nav.css";
 
 body {
   background-color: #303032;
@@ -61,7 +61,7 @@ button {
   font-size: 16px;
   user-select: none;
 
-  input {
+  & input {
     position: absolute;
     cursor: default;
     opacity: 0;
@@ -77,15 +77,15 @@ button {
     }
   }
 
-  input:checked ~ .checkmark {
+  & input:checked ~ .checkmark {
     background-color: #2196f3;
   }
 
-  input:checked ~ .checkmark:after {
+  & input:checked ~ .checkmark:after {
     display: block;
   }
 
-  .checkmark:after {
+  & .checkmark:after {
     left: 5px;
     top: 2px;
     width: 5px;
