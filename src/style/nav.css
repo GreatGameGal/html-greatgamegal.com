@@ -1,3 +1,5 @@
+@import "variables.css";
+
 nav {
   & ul {
     top: 0;
@@ -10,29 +12,29 @@ nav {
     overflow: hidden;
     position: sticky;
     list-style-type: none;
-    background-color: #202022;
+    background-color: var(--nav-background-color);
   }
 
   & li {
     float: left;
-    border-right: 1px solid #555;
+    border-right: 1px solid var(--nav-border-color);
   }
 
   & a,
   & a:visited {
     display: block;
     padding: 8px;
-    color: #f0f0f0;
+    color: var(--nav-text-color);
     text-decoration: none;
     text-align: center;
   }
 
   & a:hover {
-    background-color: #282930;
+    background-color: var(--nav-hover-background-color);
   }
 
   & .active,
   & .active:hover {
-    background-color: #555;
+    background-color: var(--nav-active-background-color);
   }
 }

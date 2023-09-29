@@ -6,7 +6,7 @@ function createPreferenceBox (
   id: string
 ) {
   const labelEl = document.createElement("label");
-  labelEl.className = "container";
+  labelEl.className = "checkbox-container";
   labelEl.append(labelText);
   const checkBoxEl = document.createElement("input");
   checkBoxEl.type = "checkbox";
@@ -49,14 +49,13 @@ window.addEventListener("load", () => {
       localStorage.setItem("prefs", JSON.stringify({ storage: {} }));
       for (const box of checkboxes) {
         box.checkbox.disabled = false;
-        box.label.classList.remove("disabled");
       }
     } else {
-      localStorage.removeItem("prefs");
       for (const box of checkboxes) {
+        box.checkbox.checked = false;
         box.checkbox.disabled = true;
-        box.label.classList.add("disabled");
       }
+      localStorage.removeItem("prefs");
     }
   });
 
@@ -68,7 +67,7 @@ window.addEventListener("load", () => {
     const box = createPreferenceBox(storageOptsDiv, opt[1], opt[0]);
     box.checkbox.disabled = !prefStoreEl.checked;
     if (!prefStoreEl.checked) {
-      box.label.classList.add("disabled");
+      box.checkbox.disabled = true;
     }
 
     box.checkbox.addEventListener("change", (e) => {

@@ -1,8 +1,9 @@
-@import "./nav.css";
+@import "variables.css";
+@import "nav.css";
 
 body {
-  background-color: #303032;
-  color: #f0f0f0;
+  background-color: var(--main-background-color);
+  color: var(--text-color);
   margin: 0;
   flex-flow: column;
   height: 100vh;
@@ -17,7 +18,7 @@ h3 {
 
 a,
 a:visited {
-  color: #20c0dc;
+  color: var(--link-color);
 }
 
 div {
@@ -31,19 +32,23 @@ main {
   flex: 1;
 }
 
+.secondary {
+  background-color: var(--secondary-background-color);
+}
+
 footer {
   display: block;
-  background-color: #242628;
+  background-color: var(--footer-background-color);
 }
 
 input {
-  background-color: #555;
-  color: #f0f0f0;
+  background-color: var(--input-background-color);
+  color: var(--input-text-color);
 }
 
 button {
-  color: #444;
-  background-color: #f0f0f0;
+  color: var(--button-text-color);
+  background-color: var(--button-background-color);
 }
 
 ::placeholder {
@@ -51,7 +56,7 @@ button {
   text-align: center;
 }
 
-.container {
+.checkbox-container {
   display: block;
   position: relative;
   padding-top: 1px;
@@ -68,17 +73,17 @@ button {
     height: 0;
     width: 0;
   }
-  &.disabled {
+  &:has(input:disabled) {
     cursor: default;
 
     .checkmark,
     .checkmark:hover {
-      background-color: #777;
+      background-color: var(--checkbox-disabled-color);
     }
   }
 
   & input:checked ~ .checkmark {
-    background-color: #2196f3;
+    background-color: var(--checkbox-filled-color);
   }
 
   & input:checked ~ .checkmark:after {
@@ -95,10 +100,8 @@ button {
     transform: rotate(45deg);
   }
 
-  &:hover {
-    input ~ .checkmark {
-      background-color: #ccc;
-    }
+  & .checkmark {
+    border-radius: var(--checkmark-border-radius);
   }
 }
 
@@ -108,7 +111,7 @@ button {
   left: 0;
   height: 18px;
   width: 18px;
-  background-color: #eee;
+  background-color: var(--checkbox-empty-color);
 
   &:after {
     content: "";

@@ -1,0 +1,26 @@
+:root {
+  --text-color: #F5F5F5;
+  --link-color: #33D7D1;
+  
+  --main-background-color: #343232;
+  --secondary-background-color: #494646;
+
+  --button-background-color: #494646;
+  --button-text-color: var(--text-color);
+
+  --input-background-color: #535050;
+  --input-text-color: var(--text-color);
+  
+  --checkmark-border-radius: 0px;
+  --checkbox-empty-color: #EBEBEB;
+  --checkbox-disabled-color: #A3A3A3;
+  --checkbox-filled-color: #22AAA6;
+
+  --nav-background-color: #1F1E1E;
+  --nav-hover-background-color: #2A2828;
+  --nav-active-background-color: #3E3C3C;
+  --nav-border-color: #5E5A5A;
+  --nav-text-color: var(--text-color);
+
+  --footer-background-color: #2A2828;
+}
