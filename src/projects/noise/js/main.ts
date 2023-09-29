@@ -7,6 +7,7 @@ const xValEl = <HTMLInputElement>document.getElementById("xVal");
 const yValEl = <HTMLInputElement>document.getElementById("yVal");
 const zValEl = <HTMLInputElement>document.getElementById("zVal");
 const seedValEl = <HTMLInputElement>document.getElementById("seedVal");
+let imageData = new ImageData(canvas.width, canvas.height);
 
 if (
   canvas != null &&
@@ -46,12 +47,13 @@ if (
         }
         const width = parentNode.offsetWidth - 16;
         const height = parentNode.offsetHeight * 0.85 - 16;
+
         const dim = width > height ? height : width;
         if (canvas.width != dim) {
           canvas.width = dim;
           canvas.height = dim;
+          imageData = new ImageData(canvas.width, canvas.height);
         }
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
 
         const xOff = this.getX(),
