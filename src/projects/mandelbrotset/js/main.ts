@@ -11,6 +11,7 @@ const limitValEl = <HTMLInputElement>document.getElementById("limitVal");
 const resetButtonEl = <HTMLButtonElement>document.getElementById("reset");
 
 const ctx = <CanvasRenderingContext2D>canvas.getContext("2d", { alpha: false });
+let imageData = new ImageData(canvas.width, canvas.height);
 
 const settingSaving =
   localStorage.prefs !== undefined &&
@@ -138,11 +139,11 @@ if (
         if (canvas.width != dim) {
           canvas.width = dim;
           canvas.height = dim;
+          imageData = new ImageData(canvas.width, canvas.height);
         }
         if (ctx == null) {
           return;
         }
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
 
         for (let x = 0; x < canvas.width; x++) {
