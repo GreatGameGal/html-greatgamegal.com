@@ -73,6 +73,8 @@ button {
     height: 0;
     width: 0;
   }
+  /* :has is currently not supported in Firefox without enabling a feature flag, but is close to being supported.
+      See: https://www.mozilla.org/en-US/firefox/119.0a1/releasenotes/ */
   &:has(input:disabled) {
     cursor: default;
 
