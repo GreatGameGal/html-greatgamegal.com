@@ -1,16 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "rootDir": "./src/",
-    "moduleResolution": "classic",
-    "outDir": "./build/",
-    "newLine": "lf",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "bun-types",
+      "web"
+    ],
+    "lib": ["ESNext"],
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+    "allowJs": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "skipLibCheck": true
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "composite": true,
+    "downlevelIteration": true,
+    "allowSyntheticDefaultImports": true
   }
 }

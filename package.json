@@ -1,45 +1,25 @@
 {
   "name": "greatgamegal.com-html",
   "version": "1.0.0",
-  "description": "Frontend for greatgamegal.com.",
-  "main": "index.js",
   "author": "Serenity Braesch",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/web": "^0.0.115",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "bun-types": "^1.0.4-canary.20231004T140131",
+    "eslint": "^8.50.0",
+    "onchange": "^7.1.0",
+    "typescript": "^5.2.2"
+  },
+  "description": "Frontend for greatgamegal.com.",
   "license": "MIT",
   "private": true,
   "scripts": {
     "lint": "eslint .",
     "lintAndFix": "eslint --fix .",
-    "copy:json": "copyfiles -u 1 'src/**/*.json' build",
-    "copy:html": "copyfiles -u 1 'src/**/*.html' build",
-    "copy:css": "copyfiles -u 1 'src/**/*.css' build",
-    "copy:resources": "copyfiles -u 1 -a 'src/**/resources/**' build",
-    "copy": "npm-run-all --parallel 'copy:*'",
-    "clean:css": "rimraf build/**/*.css",
-    "clean:js": "rimraf 'build/**/*.js'",
-    "clean:json": "rimraf 'build/**/*.json'",
-    "clean:html": "rimraf 'build/**/*.html' './build/**/*.htm'",
-    "clean:resources": "rimraf 'build/**/resources'",
-    "clean": "rimraf 'build/*'",
-    "watch:ts": "onchange 'src/**/*.ts' 'src/**/*.js' -- npm-run-all clean:js lintAndFix build:typescript",
-    "watch:html": "onchange 'src/**/*.html' 'src/**/*.htm' -- npm-run-all clean:html lintAndFix copy:html",
-    "watch:css": "onchange 'src/**/*.css' -- npm-run-all clean:css lintAndFix copy:css",
-    "watch:json": "onchange 'src/**/*.json' -- npm-run-all clean:json lintAndFix copy:json",
-    "watch:resources": "onchange 'src/**/resources/**' -- npm-run-all clean:resources copy:resources",
-    "watch": "npm-run-all --parallel 'watch:*'",
-    "build:typescript": "tsc",
-    "build": "npm-run-all clean copy --parallel 'build:*'",
+    "watch": "onchange 'src/**/*' -- bun run build",
+    "build": "tsc && bun run build.ts",
     "dev": "bun run watch"
-  },
-  "dependencies": {
-    "copyfiles": "^2.4.1",
-    "npm-run-all": "^4.1.5",
-    "onchange": "^7.1.0",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.2.2"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
-    "eslint": "^8.50.0"
   }
 }
