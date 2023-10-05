@@ -1,14 +1,24 @@
 @import "variables.css";
 @import "nav.css";
 
+html {
+  /* Why no go on body Firefox? */
+  scrollbar-width: none;
+}
+
 body {
   background-color: var(--main-background-color);
   color: var(--text-color);
   margin: 0;
-  flex-flow: column;
   height: 100vh;
-  display: flex;
+  display: grid;
+  -ms-overflow-style: none;
 }
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
 
 h1,
 h2,
@@ -21,19 +31,25 @@ a:visited {
   color: var(--link-color);
 }
 
-div {
-  flex: 1;
-}
 
 main {
+  height: calc(100vh - var(--nav-height));
+  box-sizing: border-box;
   position: static;
   overflow: auto;
-  margin: 8px;
-  flex: 1;
+  padding: 8px;
+  margin: 0;
 }
 
-.secondary {
-  background-color: var(--secondary-background-color);
+.container {
+  overflow: auto;
+  background-color: var(--container-background-color);
+  padding: 8px;
+  border-radius: var(--container-border-radius);
+}
+
+.container .container {
+  background-color: var(--nested-container-background-color);
 }
 
 footer {
