@@ -54,6 +54,7 @@ main {
 }
 
 footer {
+  padding: 8px;
   display: block;
   background-color: var(--footer-background-color);
 }
