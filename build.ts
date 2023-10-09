@@ -1,9 +1,10 @@
 import fs from "node:fs";
+import path from "path";
 
 const srcDir = "./src";
 const outDir = "./build";
 
-type FileHandler = (srcDir: string | URL, outDir: string | URL, path: string | URL) => void;
+type FileHandler = (srcDir: string | URL, outDir: string | URL, path: string | URL) => Promise<void>;
 
 const tsTranspiler = new Bun.Transpiler({
   loader: "ts",
@@ -32,16 +33,17 @@ function addClass (element: HTMLRewriterTypes.Element, className: string) {
 
 class ComponentHandler implements HTMLRewriterTypes.HTMLRewriterElementContentHandlers {
   async element (element: HTMLRewriterTypes.Element) {
-    if (!element.hasAttribute("src")) {
+    const src = element.getAttribute("src");
+    if (!element.hasAttribute("src") || src == null) {
       console.warn(`Component element does not have src attribute.`, element);
       return;
     }
-    const src = element.getAttribute("src");
-    if (!fs.existsSync(`${srcDir}/${src}`)) {
+    const srcPath = path.join(import.meta.dir, srcDir, src);
+    if (!fs.existsSync(srcPath)) {
       console.error(`COMPONENT SRC FILE DOES NOT EXIST: ${src}`);
       return;
     }
-    const replacementFile = Bun.file(`${srcDir}/${src}`);
+    const replacementFile = Bun.file(srcPath);
     const rewriter = new HTMLRewriter();
     if (element.hasAttribute("addclassbyid")) {
       const rawToAdd = element.getAttribute("addclassbyid") ?? "";
@@ -54,7 +56,7 @@ class ComponentHandler implements HTMLRewriterTypes.HTMLRewriterElementContentHa
         });
       }
     }
-    const replacement = await rewriter.transform(new Response(replacementFile)).text();
+    const replacement = await rewriter.transform(new Response(await replacementFile.text())).text();
     element.replace(replacement, { html: true });
   }
 }
@@ -66,7 +68,7 @@ async function transpileHTML (srcDir: string | URL, outDir: string | URL, path: 
   const srcFile = Bun.file(`${srcDir}${path}`);
   const outFile = Bun.file(`${outDir}${path}`);
 
-  const src = new Response(srcFile);
+  const src = new Response(await srcFile.text());
   const out = await htmlRewriter.transform(src).arrayBuffer();
   await Bun.write(outFile, out);
 }
@@ -101,6 +103,7 @@ async function transpileDir (srcDir: string, outDir: string, path = "") {
     }
     if (handler != null) {
       await handler(srcDir, outDir, `${path}/${file}`);
+      console.log(file);
     }
   }
 }
@@ -112,5 +115,5 @@ fs.rmSync("./build", {
 });
 console.log("Beginning build...");
 fs.mkdirSync("./build");
-transpileDir(srcDir, outDir);
+await transpileDir(srcDir, outDir);
 console.log("Build complete.");
