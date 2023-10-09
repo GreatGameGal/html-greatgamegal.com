@@ -103,7 +103,6 @@ async function transpileDir (srcDir: string, outDir: string, path = "") {
     }
     if (handler != null) {
       await handler(srcDir, outDir, `${path}/${file}`);
-      console.log(file);
     }
   }
 }
