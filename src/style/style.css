@@ -1,5 +1,6 @@
 @import "variables.css";
 @import "nav.css";
+@import "classy.css";
 
 html {
   /* Why no go on body Firefox? */
