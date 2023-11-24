@@ -111,11 +111,11 @@ async function transpileDir (srcDir: string, outDir: string) {
 }
 
 console.log("Removing old build...");
-fs.rmSync("./build", {
+fs.rmSync(outDir, {
   recursive: true,
   force: true,
 });
 console.log("Beginning build...");
-fs.mkdirSync("./build");
+fs.mkdirSync(outDir);
 await transpileDir(srcDir, outDir);
 console.log("Build complete.");
