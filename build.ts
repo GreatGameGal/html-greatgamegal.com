@@ -3,6 +3,7 @@ import path from "path";
 
 const srcDir = "./src";
 const outDir = "./build";
+const ALL_FILE_GLOB = new Bun.Glob("**/*");
 
 type FileHandler = (srcDir: string | URL, outDir: string | URL, path: string | URL) => Promise<void>;
 
@@ -79,11 +80,13 @@ async function copyFile (srcDir: string | URL, outDir: string | URL, path: strin
   await Bun.write(Bun.file(`${outDir}${path}`), Bun.file(`${srcDir}${path}`));
 }
 
-async function transpileDir (srcDir: string, outDir: string, path = "") {
-  for(const file of fs.readdirSync(`${srcDir}${path}`)) {
-    if (fs.statSync(`${srcDir}${path}/${file}`).isDirectory()) {
-      fs.mkdirSync(`${outDir}${path}/${file}`, { recursive: true });
-      transpileDir(`${srcDir}`, outDir, `${path}/${file}`);
+async function transpileDir (srcDir: string, outDir: string) {
+  for await (const file of ALL_FILE_GLOB.scan({
+    cwd: srcDir,
+    onlyFiles: false,
+  })) {
+    if (fs.statSync(`${srcDir}/${file}`).isDirectory()) {
+      fs.mkdirSync(`${outDir}/${file}`, { recursive: true });
       continue;
     }
     let handler: FileHandler;
@@ -102,7 +105,7 @@ async function transpileDir (srcDir: string, outDir: string, path = "") {
       } break;
     }
     if (handler != null) {
-      await handler(srcDir, outDir, `${path}/${file}`);
+      await handler(srcDir, outDir, `/${file}`);
     }
   }
 }
