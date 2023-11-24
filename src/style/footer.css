@@ -1,0 +1,24 @@
+
+
+footer {
+  padding: 8px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  background-color: var(--footer-background-color);
+}
+
+.social-icon,
+.social-icon:visited {
+  color: #aaaaaa;
+  transition: color 0.5s;
+  text-decoration: none;
+  &:hover {
+    color: #cccccc;
+  }
+}
+
+.social-icons {
+  text-align: right;
+  flex-grow: 1;
+}

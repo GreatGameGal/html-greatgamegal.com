@@ -1,5 +1,6 @@
 @import "variables.css";
 @import "nav.css";
+@import "footer.css";
 @import "classy.css";
 
 html {
@@ -53,11 +54,7 @@ main {
   background-color: var(--nested-container-background-color);
 }
 
-footer {
-  padding: 8px;
-  display: block;
-  background-color: var(--footer-background-color);
-}
+
 
 input {
   background-color: var(--input-background-color);
