@@ -36,6 +36,7 @@ a:visited {
 
 main {
   min-height: calc(100vh - var(--nav-height));
+  height: calc(100vh - var(--nav-height));
   box-sizing: border-box;
   overflow: none;
   flex-grow: 1;
