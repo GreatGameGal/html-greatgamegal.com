@@ -11,7 +11,6 @@ const limitValEl = <HTMLInputElement>document.getElementById("limitVal");
 const resetButtonEl = <HTMLButtonElement>document.getElementById("reset");
 
 const ctx = <CanvasRenderingContext2D>canvas.getContext("2d", { alpha: false });
-let imageData = new ImageData(canvas.width, canvas.height);
 
 const settingSaving =
   localStorage.prefs !== undefined &&
@@ -26,6 +25,26 @@ const defaults = {
 };
 
 const DEFAULT_SCALE = 3;
+const RESOLUTION = 512;
+
+canvas.width = RESOLUTION;
+canvas.height = RESOLUTION;
+const imageData = new ImageData(RESOLUTION, RESOLUTION);
+
+const resize = () => {
+  const parentNode = canvas.parentElement;
+  if (!parentNode) {
+    return;
+  }
+  const width = parentNode.offsetWidth - 16;
+  const height = parentNode.offsetHeight * 0.85 - 16;
+  const dim = Math.floor(Math.min(width, height));
+  console.log(width, height, dim);
+  canvas.style.width = `${dim}px`;
+  canvas.style.height = `${dim}px`;
+
+};
+resize();
 
 if (
   canvas != null &&
@@ -102,23 +121,23 @@ if (
     reset () {
       // Sets iterations
       this.data[0] = defaults.iterations;
-      iterationsValEl.value = this.getIterations().toString();
+      iterationsValEl.value = "";
 
       // Sets limit
       this.data[1] = defaults.limit;
-      limitValEl.value = this.getLimit().toString();
+      limitValEl.value = "";
 
       // Sets x
       this.data[2] = defaults.x;
-      xValEl.value = this.getX().toString();
+      xValEl.value = "";
 
       // Sets y
       this.data[3] = defaults.y;
-      yValEl.value = this.getY().toString();
+      yValEl.value = "";
 
       // Sets z
       this.data[4] = defaults.z;
-      zoomValEl.value = this.getZ().toString();
+      zoomValEl.value = "";
 
       this.redraw();
     }
@@ -129,30 +148,18 @@ if (
       }
 
       this.redrawTimeout = window.setTimeout(() => {
-        const parentNode = <HTMLDivElement>canvas.parentNode;
-        if (parentNode == null) {
-          return;
-        }
-        const width = parentNode.offsetWidth - 16;
-        const height = parentNode.offsetHeight * 0.85 - 16;
-        const dim = width > height ? height : width;
-        if (canvas.width != dim) {
-          canvas.width = dim;
-          canvas.height = dim;
-          imageData = new ImageData(canvas.width, canvas.height);
-        }
         if (ctx == null) {
           return;
         }
         const data = imageData.data;
 
-        for (let x = 0; x < canvas.width; x++) {
-          for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < RESOLUTION; x++) {
+          for (let y = 0; y < RESOLUTION; y++) {
             const a =
               map(
                 x,
                 0,
-                canvas.width,
+                RESOLUTION,
                 -DEFAULT_SCALE / this.getZ(),
                 DEFAULT_SCALE / this.getZ()
               ) + this.getX();
@@ -160,7 +167,7 @@ if (
               map(
                 y,
                 0,
-                canvas.width,
+                RESOLUTION,
                 -DEFAULT_SCALE / this.getZ(),
                 DEFAULT_SCALE / this.getZ()
               ) + this.getY();
@@ -172,7 +179,7 @@ if (
               0,
               255
             );
-            const index = (y * canvas.width + x) * 4;
+            const index = (y * RESOLUTION + x) * 4;
 
             data[index] = mappedMandelVal % 255;
             data[index + 1] = mappedMandelVal % 255;
@@ -232,9 +239,6 @@ if (
   }
 
   window.addEventListener("load", () => {
-    if (!settingSaving) {
-      resetButtonEl.style.display = "none";
-    }
 
     const renderer = new Mandelbrot();
 
@@ -272,11 +276,12 @@ if (
       let lastX = downEvent.offsetX;
       let lastY = downEvent.offsetY;
       const mouseUpdate = (moveEvent: MouseEvent) => {
+        const boundingCanvas = canvas.getBoundingClientRect();
         renderer.setX(renderer.getX() +
             map(
               lastX - moveEvent.offsetX,
-              -canvas.width,
-              canvas.width,
+              -boundingCanvas.width,
+              boundingCanvas.width,
               -DEFAULT_SCALE,
               DEFAULT_SCALE
             ) /
@@ -284,8 +289,8 @@ if (
         renderer.setY(renderer.getY() +
             map(
               lastY - moveEvent.offsetY,
-              -canvas.height,
-              canvas.height,
+              -boundingCanvas.height,
+              boundingCanvas.height,
               -DEFAULT_SCALE,
               DEFAULT_SCALE
             ) /
@@ -312,13 +317,14 @@ if (
 
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
+      const boundingCanvas = canvas.getBoundingClientRect();
       if (e.deltaY < 0) {
         if (renderer.getZ() >= 1) {
           renderer.setX(renderer.getX() +
-              (e.offsetX - canvas.width / 2) / canvas.width * 2 /
+              (e.offsetX - boundingCanvas.width / 2) / boundingCanvas.width * 2 /
                 renderer.getZ() || 0);
           renderer.setY(renderer.getY() +
-              (e.offsetY - canvas.height / 2) / canvas.height * 2 /
+              (e.offsetY - boundingCanvas.height / 2) / boundingCanvas.height * 2 /
                 renderer.getZ() || 0);
 
           xValEl.value = renderer.getX().toString();
@@ -338,6 +344,7 @@ if (
     });
 
     window.addEventListener("resize", () => {
+      resize();
       renderer.redraw();
     });
 
