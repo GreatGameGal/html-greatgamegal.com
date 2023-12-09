@@ -54,7 +54,7 @@ class Mandelbrot {
   image: ImageData;
   mem?: ArrayBuffer;
   memOffset?: number;
-  redrawTimeout: number | null;
+  animationFrame: number | null;
 
 
   constructor ({
@@ -96,7 +96,6 @@ class Mandelbrot {
     this._limit ??= new Float64Array(1);
     this._pos ??= new Float64Array(3);
     this._iter ??= new Float64Array(1);
-    this.image ??= new ImageData(this.canvas.width, this.canvas.height);
 
     resize(this.canvas);
 
@@ -104,7 +103,7 @@ class Mandelbrot {
       this.engineEl.style.display = "none";
     }
 
-    this.redrawTimeout = null;
+    this.animationFrame = null;
 
 
     if (settingSaving && localStorage.mandelbrotStorage !== undefined) {
@@ -149,7 +148,9 @@ class Mandelbrot {
       this.canvas.width = JS_RESOLUTION;
       this.canvas.height = JS_RESOLUTION;
       this.image = new ImageData(this.canvas.width, this.canvas.height);
+      this.image.data.fill(255);
     }
+    this.image ??= new ImageData(this.canvas.width, this.canvas.height);
 
     // TODO: THIS IS DUMB, JUST WATCH FOR CHANGES LIKE I DO ELSEWHERE.
     if (settingSaving) {
@@ -213,19 +214,21 @@ class Mandelbrot {
   }
 
   mandelbrotCalc (x0: number, y0: number) {
-    let y1 = 0;
-    let x1 = 0;
-    let x2 = 0;
-    let y2 = 0;
-    let w = 0;
-    for (let i = 0; i < this.iterations + 1; i++) {
+    let x1 = x0;
+    let y1 = y0;
+    let x2 = x1 * x1;
+    let y2 = y1 * y1;
+    let x1y1 = x1 + y1;
+    let w = x1y1 * x1y1;
+    for (let i = 0; i < this.iterations; i++) {
       x1 = x2 - y2 + x0;
       y1 = w - x2 - y2 + y0;
       x2 = x1 * x1;
       y2 = y1 * y1;
-      w = (x1 + y1) * (x1 + y1);
-      if (Math.abs(x1 + y1) > this.limit) {
-        return i - 1;
+      x1y1 = x1 + y1;
+      w = x1y1 * x1y1;
+      if (Math.abs(x1y1) > this.limit) {
+        return i;
       }
     }
     return this.iterations;
@@ -265,64 +268,47 @@ class Mandelbrot {
     this.redraw();
   }
 
+  private drawImmediate () {
+    const data = this.image.data;
+
+    switch (this.engine) {
+
+
+      case Engine.Zig: {
+        if (this.instance != null && this.memOffset != null) {
+          (<(self: number) => void> this.instance?.exports.render)(this.memOffset);
+        }
+      } break;
+
+      case Engine.JS:
+      default: {
+        const zoom = DEFAULT_SCALE / this.z;
+        const twoZoom = zoom * 2;
+        for (let x = 0; x < this.canvas.width; x++) {
+          for (let y = 0; y < this.canvas.height; y++) {
+            const a = x / this.canvas.width * twoZoom - zoom + this.x;
+            const b = y / this.canvas.height * twoZoom - zoom + this.y;
+            const mandelbrotVal = this.mandelbrotCalc(a, b);
+            const mappedMandelVal = mandelbrotVal / this.iterations * 255;
+            const index = (y * this.canvas.width + x) * 4;
+
+            data[index] = mappedMandelVal;
+            data[index + 1] = mappedMandelVal;
+            data[index + 2] = mappedMandelVal;
+          }
+        }
+        this.ctx.putImageData(this.image, 0, 0);
+      } break;
+    }
+    this.animationFrame = null;
+  }
+
   redraw () {
-    if (this.redrawTimeout != null) {
+    if (this.animationFrame != null) {
       return;
     }
 
-    this.redrawTimeout = window.setTimeout(() => {
-      const data = this.image.data;
-
-      switch (this.engine) {
-
-
-        case Engine.Zig: {
-          if (this.instance != null && this.memOffset != null) {
-            (<(self: number) => void> this.instance?.exports.render)(this.memOffset);
-          }
-        } break;
-
-        case Engine.JS:
-        default: {
-          for (let x = 0; x < this.canvas.width; x++) {
-            for (let y = 0; y < this.canvas.height; y++) {
-              const a =
-                  map(
-                    x,
-                    0,
-                    this.canvas.width,
-                    -DEFAULT_SCALE / this.z,
-                    DEFAULT_SCALE / this.z
-                  ) + this.x;
-              const b =
-                  map(
-                    y,
-                    0,
-                    this.canvas.height,
-                    -DEFAULT_SCALE / this.z,
-                    DEFAULT_SCALE / this.z
-                  ) + this.y;
-              const mandelbrotVal = this.mandelbrotCalc(a, b);
-              const mappedMandelVal = map(
-                mandelbrotVal,
-                0,
-                this.iterations,
-                0,
-                255
-              );
-              const index = (y * this.canvas.width + x) * 4;
-
-              data[index] = mappedMandelVal % 255;
-              data[index + 1] = mappedMandelVal % 255;
-              data[index + 2] = mappedMandelVal % 255;
-              data[index + 3] = 255;
-            }
-          }
-        } break;
-      }
-      this.ctx.putImageData(this.image, 0, 0);
-      this.redrawTimeout = null;
-    }, 5);
+    this.animationFrame = requestAnimationFrame(() => this.drawImmediate());
   }
 
   setIterations (iterations: number) {
@@ -375,6 +361,7 @@ class Mandelbrot {
           renderer.canvas.width = JS_RESOLUTION;
           renderer.canvas.height = JS_RESOLUTION;
           renderer.image = new ImageData(renderer.canvas.width, renderer.canvas.height);
+          renderer.image.data.fill(255);
           resize(renderer.canvas);
         }
       }
@@ -511,13 +498,19 @@ class Mandelbrot {
 window.addEventListener("load", async () => {
   const canvas = <HTMLCanvasElement>document.getElementById("mandelbrotCanvas");
   let instance;
-
+  let renderer: Mandelbrot;
   try {
-    instance = (await WebAssembly.instantiateStreaming(fetch("./wasm-mandelbrot.wasm"))).instance;
+    instance = (await WebAssembly.instantiateStreaming(fetch("./wasm-mandelbrot.wasm"), {
+      env: {
+        draw: () => {
+          renderer.ctx.putImageData(renderer.image, 0, 0);
+        },
+      },
+    })).instance;
   } catch (err) {
     console.error(err);
   } finally {
-    new Mandelbrot({
+    renderer = new Mandelbrot({
       ctx: <CanvasRenderingContext2D>canvas.getContext("2d"),
       instance,
       engineEl: <HTMLSelectElement>document.getElementById("engineEl"),
