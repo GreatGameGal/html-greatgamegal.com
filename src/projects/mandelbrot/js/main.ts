@@ -19,7 +19,7 @@ const settingSaving =
 
 const defaults = {
   iterations: 200,
-  x: 0,
+  x: -0.5,
   y: 0,
   z: 1,
   limit: 2,
@@ -125,7 +125,7 @@ if (
 
     redraw () {
       if (this.redrawTimeout != null) {
-        clearTimeout(this.redrawTimeout);
+        return;
       }
 
       this.redrawTimeout = window.setTimeout(() => {
@@ -182,7 +182,7 @@ if (
         }
         ctx.putImageData(imageData, 0, 0);
         this.redrawTimeout = null;
-      }, 10);
+      }, 5);
     }
 
     setIterations (iterations: number) {
