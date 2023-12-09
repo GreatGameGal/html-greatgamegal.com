@@ -8,6 +8,16 @@
     <div id="html_component" addclassbyid="nav_projects:active" src="/components/nav.html"></div>
     <main>
       <h1>Mandelbrot Set</h1>
+      <div>
+        <form>
+          <label><strong style="font-size: 1.5em;">Renderer</strong></label>
+          <br>
+          <select name="renderer" id="engineEl">
+            <option value="js">JS</option>
+            <option value="zig">WASM (ZIG)</option>
+          </select>
+        </form>
+      </div>
       <canvas id="mandelbrotCanvas"></canvas>
       <br>
       <form>

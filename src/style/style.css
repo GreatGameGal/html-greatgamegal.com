@@ -58,7 +58,7 @@ main {
 
 
 
-input {
+input, select {
   background-color: var(--input-background-color);
   color: var(--input-text-color);
 }

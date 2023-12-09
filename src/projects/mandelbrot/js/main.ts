@@ -4,18 +4,23 @@ const settingSaving =
   localStorage.prefs !== undefined &&
   JSON.parse(localStorage.prefs)["storage"]["mandelbrotStorage"];
 
+  enum Engine {
+    JS = "js",
+    Zig = "zig",
+  }
+
 const defaults = {
-  iterations: 200,
+  iterations: 512,
   x: -0.5,
   y: 0,
   z: 1,
-  limit: 2,
+  limit: 3,
+  engine: Engine.JS,
 };
 
 const DEFAULT_SCALE = 3;
-const RESOLUTION = 512;
+const JS_RESOLUTION = 512;
 
-const imageData = new ImageData(RESOLUTION, RESOLUTION);
 
 const resize = (canvas: HTMLCanvasElement) => {
   const parentNode = canvas.parentElement;
@@ -23,9 +28,8 @@ const resize = (canvas: HTMLCanvasElement) => {
     return;
   }
   const width = parentNode.offsetWidth - 16;
-  const height = parentNode.offsetHeight * 0.85 - 16;
+  const height = parentNode.offsetHeight * 0.80 - 16;
   const dim = Math.floor(Math.min(width, height));
-  console.log(width, height, dim);
   canvas.style.width = `${dim}px`;
   canvas.style.height = `${dim}px`;
 
@@ -34,19 +38,31 @@ const resize = (canvas: HTMLCanvasElement) => {
 class Mandelbrot {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  instance?: WebAssembly.Instance;
+  engine: Engine;
+  engineEl?: HTMLSelectElement;
   xEl?: HTMLInputElement;
   yEl?: HTMLInputElement;
   zoomEl?: HTMLInputElement;
   iterationsEl?: HTMLInputElement;
   limitEl?: HTMLInputElement;
   resetEl?: HTMLButtonElement;
-  data: Float64Array;
+
+  _limit: Float64Array;
+  _pos: Float64Array;
+  _iter: Float64Array;
+  image: ImageData;
+  mem?: ArrayBuffer;
+  memOffset?: number;
   redrawTimeout: number | null;
 
+
   constructor ({
-    ctx, xEl, yEl, zoomEl, iterationsEl, limitEl, resetEl,
+    ctx, instance, engineEl, xEl, yEl, zoomEl, iterationsEl, limitEl, resetEl,
   }: {
       ctx?: CanvasRenderingContext2D,
+      instance?: WebAssembly.Instance;
+      engineEl?: HTMLSelectElement;
       xEl?: HTMLInputElement,
       yEl?: HTMLInputElement,
       zoomEl?: HTMLInputElement,
@@ -59,6 +75,8 @@ class Mandelbrot {
     }
     this.canvas = ctx.canvas;
     this.ctx = ctx;
+    this.instance = instance;
+    this.engineEl = engineEl;
     this.xEl = xEl;
     this.yEl = yEl;
     this.zoomEl = zoomEl;
@@ -66,42 +84,71 @@ class Mandelbrot {
     this.limitEl = limitEl;
     this.resetEl = resetEl;
 
-    this.canvas.width = RESOLUTION;
-    this.canvas.height = RESOLUTION;
+    if (instance != null) {
+      this.mem = (<WebAssembly.Memory>instance.exports.memory).buffer;
+      this.memOffset = (<WebAssembly.Global>instance.exports.mandelbrot).value;
+      if (this.memOffset != null) {
+        this._limit = new Float64Array(this.mem, this.memOffset, 1);
+        this._pos = new Float64Array(this.mem, this.memOffset + 8, 3);
+        this._iter = new Float64Array(this.mem, this.memOffset + 32, 1);
+      }
+    }
+    this._limit ??= new Float64Array(1);
+    this._pos ??= new Float64Array(3);
+    this._iter ??= new Float64Array(1);
+    this.image ??= new ImageData(this.canvas.width, this.canvas.height);
+
     resize(this.canvas);
 
-    this.data = new Float64Array(5);
+    if (this.instance == null && this.engineEl != null) {
+      this.engineEl.style.display = "none";
+    }
+
     this.redrawTimeout = null;
 
 
     if (settingSaving && localStorage.mandelbrotStorage !== undefined) {
       const data = JSON.parse(localStorage.mandelbrotStorage);
-      this.data[0] = data.iterations || defaults.iterations;
+      this.iterations = data.iterations || defaults.iterations;
       if (this.iterationsEl) {
-        this.iterationsEl.value = this.getIterations().toString();
+        this.iterationsEl.value = this.iterations.toString();
       }
-      this.data[1] = data.limit || defaults.limit;
+      this.limit = data.limit || defaults.limit;
       if (this.limitEl) {
-        this.limitEl.value = this.getLimit().toString();
+        this.limitEl.value = this.limit.toString();
       }
-      this.data[2] = data.x || defaults.x;
+      this.x = data.x || defaults.x;
       if (this.xEl) {
-        this.xEl.value = this.getX().toString();
+        this.xEl.value = this.x.toString();
       }
-      this.data[3] = data.y || defaults.y;
+      this.y = data.y || defaults.y;
       if (this.yEl) {
-        this.yEl.value = this.getY().toString();
+        this.yEl.value = this.y.toString();
       }
-      this.data[4] = data.zoom || defaults.z;
+      this.z = data.zoom || defaults.z;
       if (this.zoomEl) {
-        this.zoomEl.value = this.getZ().toString();
+        this.zoomEl.value = this.z.toString();
+      }
+      this.engine = data.engine || defaults.engine;
+      if (this.zoomEl) {
+        this.zoomEl.value = this.z.toString();
       }
     } else {
-      this.data[0] = defaults.iterations;
-      this.data[1] = defaults.limit;
-      this.data[2] = defaults.x;
-      this.data[3] = defaults.y;
-      this.data[4] = defaults.z;
+      this.iterations = defaults.iterations;
+      this.limit = defaults.limit;
+      this.x = defaults.x;
+      this.y = defaults.y;
+      this.z = defaults.z;
+      this.engine = defaults.engine;
+    }
+
+    if (this.engine == Engine.Zig && this.mem != null && this.instance != null && this.memOffset != null) {
+      [ this.canvas.width, this.canvas.height ] = new Uint32Array(this.mem, (<WebAssembly.Global>this.instance.exports.DIMS).value, 2);
+      this.image = new ImageData(new Uint8ClampedArray(this.mem, this.memOffset + 40, this.canvas.width * this.canvas.height * 4), this.canvas.width, this.canvas.height);
+    } else if (this.engine == Engine.JS) {
+      this.canvas.width = JS_RESOLUTION;
+      this.canvas.height = JS_RESOLUTION;
+      this.image = new ImageData(this.canvas.width, this.canvas.height);
     }
 
     // TODO: THIS IS DUMB, JUST WATCH FOR CHANGES LIKE I DO ELSEWHERE.
@@ -110,11 +157,12 @@ class Mandelbrot {
         localStorage.setItem(
           "mandelbrotStorage",
           JSON.stringify({
-            iterations: this.getIterations(),
-            limit: this.getLimit(),
-            x: this.getX(),
-            y: this.getY(),
-            zoom: this.getZ(),
+            iterations: this.iterations,
+            limit: this.limit,
+            x: this.x,
+            y: this.y,
+            zoom: this.z,
+            eninge: this.engine,
           })
         );
       }, 1000);
@@ -124,52 +172,92 @@ class Mandelbrot {
     this.redraw();
   }
 
+  get limit () {
+    return this._limit[0];
+  }
+
+  private set limit (val) {
+    this._limit[0] = val;
+  }
+
+  get iterations () {
+    return this._iter[0];
+  }
+
+  private set iterations (val) {
+    this._iter[0] = val;
+  }
+
+  get x () {
+    return this._pos[0];
+  }
+
+  private set x (val) {
+    this._pos[0] = val;
+  }
+
+  get y () {
+    return this._pos[1];
+  }
+
+  private set y (val) {
+    this._pos[1] = val;
+  }
+
+  get z () {
+    return this._pos[2];
+  }
+
+  private set z (val) {
+    this._pos[2] = val;
+  }
+
   mandelbrotCalc (x0: number, y0: number) {
     let y1 = 0;
     let x1 = 0;
     let x2 = 0;
     let y2 = 0;
     let w = 0;
-    for (let i = 0; i < this.getIterations() + 1; i++) {
+    for (let i = 0; i < this.iterations + 1; i++) {
       x1 = x2 - y2 + x0;
       y1 = w - x2 - y2 + y0;
       x2 = x1 * x1;
       y2 = y1 * y1;
       w = (x1 + y1) * (x1 + y1);
-      if (Math.abs(x1 + y1) > this.getLimit()) {
+      if (Math.abs(x1 + y1) > this.limit) {
         return i - 1;
       }
     }
-    return this.getIterations();
+    return this.iterations;
   }
 
   reset () {
     // Sets iterations
-    this.data[0] = defaults.iterations;
+    this.iterations = defaults.iterations;
     if (this.iterationsEl) {
       this.iterationsEl.value = "";
     }
 
     // Sets limit
-    this.data[1] = defaults.limit;
+    this.limit = defaults.limit;
     if (this.limitEl) {
       this.limitEl.value = "";
     }
 
     // Sets x
-    this.data[2] = defaults.x;
+    this.x = defaults.x;
     if (this.xEl) {
       this.xEl.value = "";
     }
 
     // Sets y
-    this.data[3] = defaults.y;
+    this.y = defaults.y;
     if (this.yEl) {
       this.yEl.value = "";
     }
 
     // Sets z
-    this.data[4] = defaults.z;
+    this.z = defaults.z;
     if (this.zoomEl) {
       this.zoomEl.value = "";
     }
@@ -183,101 +271,115 @@ class Mandelbrot {
     }
 
     this.redrawTimeout = window.setTimeout(() => {
-      const data = imageData.data;
+      const data = this.image.data;
 
-      for (let x = 0; x < RESOLUTION; x++) {
-        for (let y = 0; y < RESOLUTION; y++) {
-          const a =
-              map(
-                x,
-                0,
-                RESOLUTION,
-                -DEFAULT_SCALE / this.getZ(),
-                DEFAULT_SCALE / this.getZ()
-              ) + this.getX();
-          const b =
-              map(
-                y,
-                0,
-                RESOLUTION,
-                -DEFAULT_SCALE / this.getZ(),
-                DEFAULT_SCALE / this.getZ()
-              ) + this.getY();
-          const mandelbrotVal = this.mandelbrotCalc(a, b);
-          const mappedMandelVal = map(
-            mandelbrotVal,
-            0,
-            this.getIterations(),
-            0,
-            255
-          );
-          const index = (y * RESOLUTION + x) * 4;
+      switch (this.engine) {
 
-          data[index] = mappedMandelVal % 255;
-          data[index + 1] = mappedMandelVal % 255;
-          data[index + 2] = mappedMandelVal % 255;
-          data[index + 3] = 255;
-        }
+
+        case Engine.Zig: {
+          if (this.instance != null && this.memOffset != null) {
+            (<(self: number) => void> this.instance?.exports.render)(this.memOffset);
+          }
+        } break;
+
+        case Engine.JS:
+        default: {
+          for (let x = 0; x < this.canvas.width; x++) {
+            for (let y = 0; y < this.canvas.height; y++) {
+              const a =
+                  map(
+                    x,
+                    0,
+                    this.canvas.width,
+                    -DEFAULT_SCALE / this.z,
+                    DEFAULT_SCALE / this.z
+                  ) + this.x;
+              const b =
+                  map(
+                    y,
+                    0,
+                    this.canvas.height,
+                    -DEFAULT_SCALE / this.z,
+                    DEFAULT_SCALE / this.z
+                  ) + this.y;
+              const mandelbrotVal = this.mandelbrotCalc(a, b);
+              const mappedMandelVal = map(
+                mandelbrotVal,
+                0,
+                this.iterations,
+                0,
+                255
+              );
+              const index = (y * this.canvas.width + x) * 4;
+
+              data[index] = mappedMandelVal % 255;
+              data[index + 1] = mappedMandelVal % 255;
+              data[index + 2] = mappedMandelVal % 255;
+              data[index + 3] = 255;
+            }
+          }
+        } break;
       }
-      this.ctx.putImageData(imageData, 0, 0);
+      this.ctx.putImageData(this.image, 0, 0);
       this.redrawTimeout = null;
     }, 5);
   }
 
   setIterations (iterations: number) {
-    this.data[0] = iterations;
+    this.iterations = iterations;
     this.redraw();
-  }
-
-  getIterations () {
-    return this.data[0];
   }
 
   setLimit (limit: number) {
-    this.data[1] = limit;
+    this.limit = limit;
     this.redraw();
-  }
-
-  getLimit () {
-    return this.data[1];
   }
 
   setX (x: number) {
-    this.data[2] = x;
+    this.x = x;
     this.redraw();
-  }
-
-  getX () {
-    return this.data[2];
   }
 
   setY (y: number) {
-    this.data[3] = y;
+    this.y = y;
     this.redraw();
-  }
-
-  getY () {
-    return this.data[3];
   }
 
   setZ (z: number) {
-    this.data[4] = z;
+    this.z = z;
     this.redraw();
   }
-
-  getZ () {
-    return this.data[4];
-  }
-
 
   setupDomListeners () {
     // This is being done to reduce needing to check whether or not certain things are null more.
     /* eslint-disable-next-line @typescript-eslint/no-this-alias */
     const renderer = this;
 
+
     if (this.resetEl != null) {
       this.resetEl.addEventListener("click", () => this.reset());
     }
+
+    this.engineEl?.addEventListener("change", function () {
+      switch (this.value) {
+        case "zig": {
+          renderer.engine = Engine.Zig;
+          if (renderer.mem != null && renderer.instance != null && renderer.memOffset != null) {
+            [ renderer.canvas.width, renderer.canvas.height ] = new Uint32Array(renderer.mem, (<WebAssembly.Global>renderer.instance.exports.DIMS).value, 2);
+            renderer.image = new ImageData(new Uint8ClampedArray(renderer.mem, renderer.memOffset + 36, renderer.canvas.width * renderer.canvas.height * 4), renderer.canvas.width, renderer.canvas.height);
+          }
+        } break;
+
+        case "js": {
+          renderer.engine = Engine.JS;
+          renderer.canvas.width = JS_RESOLUTION;
+          renderer.canvas.height = JS_RESOLUTION;
+          renderer.image = new ImageData(renderer.canvas.width, renderer.canvas.height);
+          resize(renderer.canvas);
+        }
+      }
+      renderer.redraw();
+    });
 
     if (this.xEl != null) {
       this.xEl.addEventListener("change", function () {
@@ -326,7 +428,7 @@ class Mandelbrot {
       let lastY = downEvent.offsetY;
       const mouseUpdate = (moveEvent: MouseEvent) => {
         const boundingCanvas = this.canvas.getBoundingClientRect();
-        this.setX(this.getX() +
+        this.setX(this.x +
               map(
                 lastX - moveEvent.offsetX,
                 -boundingCanvas.width,
@@ -334,8 +436,8 @@ class Mandelbrot {
                 -DEFAULT_SCALE,
                 DEFAULT_SCALE
               ) /
-                this.getZ());
-        this.setY(this.getY() +
+                this.z);
+        this.setY(this.y +
               map(
                 lastY - moveEvent.offsetY,
                 -boundingCanvas.height,
@@ -343,13 +445,13 @@ class Mandelbrot {
                 -DEFAULT_SCALE,
                 DEFAULT_SCALE
               ) /
-                this.getZ());
+                this.z);
 
         if (this.xEl != null) {
-          this.xEl.value = this.getX().toString();
+          this.xEl.value = this.x.toString();
         }
         if (this.yEl != null) {
-          this.yEl.value = this.getY().toString();
+          this.yEl.value = this.y.toString();
         }
 
         lastX = moveEvent.offsetX;
@@ -372,33 +474,33 @@ class Mandelbrot {
       e.preventDefault();
       const boundingCanvas = this.canvas.getBoundingClientRect();
       if (e.deltaY < 0) {
-        if (renderer.getZ() >= 1) {
-          renderer.setX(renderer.getX() +
+        if (renderer.z >= 1) {
+          renderer.setX(renderer.x +
                 (e.offsetX - boundingCanvas.width / 2) / boundingCanvas.width * 2 /
-                  renderer.getZ() || 0);
-          renderer.setY(renderer.getY() +
+                  renderer.z || 0);
+          renderer.setY(renderer.y +
                 (e.offsetY - boundingCanvas.height / 2) / boundingCanvas.height * 2 /
-                  renderer.getZ() || 0);
+                  renderer.z || 0);
 
           if (this.xEl != null) {
-            this.xEl.value = renderer.getX().toString();
+            this.xEl.value = renderer.x.toString();
           }
           if (this.yEl != null) {
-            this.yEl.value = renderer.getY().toString();
+            this.yEl.value = renderer.y.toString();
           }
         }
 
-        renderer.setZ(renderer.getZ() * 1.25);
+        renderer.setZ(renderer.z * 1.25);
       } else if (e.deltaY > 0) {
-        renderer.setZ(renderer.getZ() * 0.75);
+        renderer.setZ(renderer.z * 0.75);
       }
 
 
-      if (renderer.getZ() === 0) {
+      if (renderer.z === 0) {
         renderer.setZ(1);
       }
       if (this.zoomEl != null) {
-        this.zoomEl.value = renderer.getZ().toString();
+        this.zoomEl.value = renderer.z.toString();
       }
     });
 
@@ -406,16 +508,26 @@ class Mandelbrot {
   }
 }
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   const canvas = <HTMLCanvasElement>document.getElementById("mandelbrotCanvas");
+  let instance;
 
-  new Mandelbrot({
-    ctx: <CanvasRenderingContext2D>canvas.getContext("2d"),
-    xEl: <HTMLInputElement>document.getElementById("xVal"),
-    yEl: <HTMLInputElement>document.getElementById("yVal"),
-    zoomEl: <HTMLInputElement>document.getElementById("zoomVal"),
-    iterationsEl: <HTMLInputElement>(document.getElementById("iterationsVal")),
-    limitEl: <HTMLInputElement>document.getElementById("limitVal"),
-    resetEl: <HTMLButtonElement>document.getElementById("reset"),
-  });
+  try {
+    instance = (await WebAssembly.instantiateStreaming(fetch("./wasm-mandelbrot.wasm"))).instance;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    new Mandelbrot({
+      ctx: <CanvasRenderingContext2D>canvas.getContext("2d"),
+      instance,
+      engineEl: <HTMLSelectElement>document.getElementById("engineEl"),
+      xEl: <HTMLInputElement>document.getElementById("xVal"),
+      yEl: <HTMLInputElement>document.getElementById("yVal"),
+      zoomEl: <HTMLInputElement>document.getElementById("zoomVal"),
+      iterationsEl: <HTMLInputElement>(document.getElementById("iterationsVal")),
+      limitEl: <HTMLInputElement>document.getElementById("limitVal"),
+      resetEl: <HTMLButtonElement>document.getElementById("reset"),
+    });
+  }
+
 });
