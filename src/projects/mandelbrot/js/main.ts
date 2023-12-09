@@ -25,6 +25,8 @@ const defaults = {
   limit: 2,
 };
 
+const DEFAULT_SCALE = 3;
+
 if (
   canvas != null &&
   xValEl != null &&
@@ -37,10 +39,9 @@ if (
 ) {
   class Mandelbrot {
     data: Float64Array;
-    defaultScale: number;
     redrawTimeout: number | null;
 
-    constructor (defaultScale = 3) {
+    constructor () {
       this.data = new Float64Array(5);
       this.redrawTimeout = null;
 
@@ -77,7 +78,6 @@ if (
           );
         }, 1000);
       }
-      this.defaultScale = defaultScale;
     }
 
     mandelbrotCalc (x0: number, y0: number) {
@@ -153,16 +153,16 @@ if (
                 x,
                 0,
                 canvas.width,
-                -this.defaultScale / this.getZ(),
-                this.defaultScale / this.getZ()
+                -DEFAULT_SCALE / this.getZ(),
+                DEFAULT_SCALE / this.getZ()
               ) + this.getX();
             const b =
               map(
                 y,
                 0,
                 canvas.width,
-                -this.defaultScale / this.getZ(),
-                this.defaultScale / this.getZ()
+                -DEFAULT_SCALE / this.getZ(),
+                DEFAULT_SCALE / this.getZ()
               ) + this.getY();
             const mandelbrotVal = this.mandelbrotCalc(a, b);
             const mappedMandelVal = map(
@@ -277,8 +277,8 @@ if (
               lastX - moveEvent.offsetX,
               -canvas.width,
               canvas.width,
-              -renderer.defaultScale,
-              renderer.defaultScale
+              -DEFAULT_SCALE,
+              DEFAULT_SCALE
             ) /
               renderer.getZ());
         renderer.setY(renderer.getY() +
@@ -286,8 +286,8 @@ if (
               lastY - moveEvent.offsetY,
               -canvas.height,
               canvas.height,
-              -renderer.defaultScale,
-              renderer.defaultScale
+              -DEFAULT_SCALE,
+              DEFAULT_SCALE
             ) /
               renderer.getZ());
 
