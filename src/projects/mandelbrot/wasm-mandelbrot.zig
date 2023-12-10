@@ -1,4 +1,5 @@
-// Build with: zig build-lib -target wasm32-freestanding -dynamic -O ReleaseFast wasm-mandelbrot.zig
+// TODO: Add zig to build Pipeline maybe?
+// Until then, build with: zig build-lib -target wasm32-freestanding -dynamic -O ReleaseFast wasm-mandelbrot.zig
 
 const std = @import("std");
 
