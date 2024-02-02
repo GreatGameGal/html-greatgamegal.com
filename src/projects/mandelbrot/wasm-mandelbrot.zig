@@ -1,5 +1,5 @@
 // TODO: Add zig to build Pipeline maybe?
-// Until then, build with: zig build-lib -target wasm32-freestanding -dynamic -O ReleaseFast wasm-mandelbrot.zig
+// Until then, build with: zig build-exe ./wasm-mandelbrot.zig -target wasm32-freestanding -O ReleaseFast -fno-entry --export=DIMS --export=mandelbrot_calc --export=render --export=mandelbrot
 
 const std = @import("std");
 
@@ -36,7 +36,7 @@ const Mandelbrot = extern struct {
             y2 = y1 * y1;
             x1y1 = x1 + y1;
             w = x1y1 * x1y1;
-            if (@fabs(x1y1) > self.limit) {
+            if (@abs(x1y1) > self.limit) {
                 break @floatFromInt(i);
             }
         } else self.iterations;
