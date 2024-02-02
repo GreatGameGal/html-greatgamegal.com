@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
-    "types": [
-      "bun-types",
-      "web"
-    ],
+    "types": ["bun-types", "web"],
     "lib": ["ESNext"],
     "target": "esnext",
     "module": "esnext",
@@ -17,6 +14,6 @@
     "skipLibCheck": true,
     "composite": true,
     "downlevelIteration": true,
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+  },
 }
