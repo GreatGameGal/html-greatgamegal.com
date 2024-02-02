@@ -1,17 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Mandelbrot Set Render</title>
     <link rel="stylesheet" type="text/css" href="style/style.css" />
   </head>
   <body>
-    <div id="html_component" addclassbyid="nav_projects:active" src="/components/nav.html"></div>
+    <div
+      id="html_component"
+      addclassbyid="nav_projects:active"
+      src="/components/nav.html"
+    ></div>
     <main>
       <h1>Mandelbrot Set</h1>
       <div>
         <form>
-          <label><strong style="font-size: 1.5em;">Renderer</strong></label>
-          <br>
+          <label><strong style="font-size: 1.5em">Renderer</strong></label>
+          <br />
           <select name="renderer" id="engineEl">
             <option value="js">JS</option>
             <option value="zig">WASM (ZIG)</option>
@@ -19,16 +23,16 @@
         </form>
       </div>
       <canvas id="mandelbrotCanvas"></canvas>
-      <br>
+      <br />
       <form>
         <input type="number" placeholder="Iterations" id="iterationsVal" />
         <input type="number" placeholder="X Mod" id="xVal" />
         <input type="number" placeholder="Zoom" id="zoomVal" />
         <input type="number" placeholder="Y Mod" id="yVal" />
-        <input type="number" placeholder='Value Limit' id="limitVal" />
+        <input type="number" placeholder="Value Limit" id="limitVal" />
       </form>
       <button id="reset">Reset</button>
-      <br>
+      <br />
     </main>
     <div id="html_component" src="/components/footer.html"></div>
 

@@ -1,6 +1,9 @@
-const storageOpts = [ [ "gameStorage", "Game Data Storage" ], [ "mandelbrotStorage", "Mandelbrot Setting Storage" ] ];
+const storageOpts = [
+  ["gameStorage", "Game Data Storage"],
+  ["mandelbrotStorage", "Mandelbrot Setting Storage"],
+];
 
-function createPreferenceBox (
+function createPreferenceBox(
   parent: HTMLElement,
   labelText: string,
   id: string

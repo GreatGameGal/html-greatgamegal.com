@@ -9,7 +9,9 @@ enum Engine {
   Zig = "zig",
 }
 
-const zig_wasm_module = WebAssembly.compileStreaming(fetch("./wasm-mandelbrot.wasm"));
+const zigWasmModule = WebAssembly.compileStreaming(
+  fetch("./wasm-mandelbrot.wasm")
+);
 
 interface Settings {
   iterations: number;
@@ -83,7 +85,7 @@ abstract class Mandelbrot {
   image: ImageData;
   animationFrame: number | null;
 
-  constructor ({
+  constructor({
     canvas,
     ctx,
     xEl,
@@ -99,7 +101,9 @@ abstract class Mandelbrot {
     iterations,
   }: MandelbrotBaseOptions) {
     if (!ctx) {
-      throw new Error("Context not provided. HTML5 Canvas may not be supported.");
+      throw new Error(
+        "Context not provided. HTML5 Canvas may not be supported."
+      );
     }
     this.canvas = canvas;
     this.ctx = ctx;
@@ -167,17 +171,17 @@ abstract class Mandelbrot {
 
   abstract mandelbrotCalc(x0: number, y0: number): number;
 
-  protected drawImmediate (): void {
+  protected drawImmediate(): void {
     const data = this.image.data;
 
     const zoom = DEFAULT_SCALE / this.z;
     const twoZoom = zoom * 2;
     for (let x = 0; x < this.canvas.width; x++) {
       for (let y = 0; y < this.canvas.height; y++) {
-        const a = x / this.canvas.width * twoZoom - zoom + this.x;
-        const b = y / this.canvas.height * twoZoom - zoom + this.y;
+        const a = (x / this.canvas.width) * twoZoom - zoom + this.x;
+        const b = (y / this.canvas.height) * twoZoom - zoom + this.y;
         const mandelbrotVal = this.mandelbrotCalc(a, b);
-        const mappedMandelVal = mandelbrotVal / this.iterations * 255 % 255;
+        const mappedMandelVal = ((mandelbrotVal / this.iterations) * 255) % 255;
         const index = (y * this.canvas.width + x) * 4;
 
         data[index] = mappedMandelVal;
@@ -188,47 +192,47 @@ abstract class Mandelbrot {
     this.ctx.putImageData(this.image, 0, 0);
   }
 
-  get limit () {
+  get limit() {
     return this._limit[0];
   }
 
-  protected set limit (val) {
+  protected set limit(val) {
     this._limit[0] = val;
   }
 
-  get iterations () {
+  get iterations() {
     return this._iter[0];
   }
 
-  protected set iterations (val) {
+  protected set iterations(val) {
     this._iter[0] = val;
   }
 
-  get x () {
+  get x() {
     return this._pos[0];
   }
 
-  protected set x (val) {
+  protected set x(val) {
     this._pos[0] = val;
   }
 
-  get y () {
+  get y() {
     return this._pos[1];
   }
 
-  protected set y (val) {
+  protected set y(val) {
     this._pos[1] = val;
   }
 
-  get z (): number {
+  get z(): number {
     return this._pos[2];
   }
 
-  protected set z (val) {
+  protected set z(val) {
     this._pos[2] = val;
   }
 
-  reset () {
+  reset() {
     // Sets iterations
     this.iterations = defaults.iterations;
     if (this.iterationsEl) {
@@ -262,7 +266,7 @@ abstract class Mandelbrot {
     this.redraw();
   }
 
-  redraw () {
+  redraw() {
     if (this.animationFrame != null) {
       return;
     }
@@ -273,27 +277,27 @@ abstract class Mandelbrot {
     });
   }
 
-  setIterations (iterations: number) {
+  setIterations(iterations: number) {
     this.iterations = iterations;
     this.redraw();
   }
 
-  setLimit (limit: number) {
+  setLimit(limit: number) {
     this.limit = limit;
     this.redraw();
   }
 
-  setX (x: number) {
+  setX(x: number) {
     this.x = x;
     this.redraw();
   }
 
-  setY (y: number) {
+  setY(y: number) {
     this.y = y;
     this.redraw();
   }
 
-  setZ (z: number) {
+  setZ(z: number) {
     this.z = z;
     this.redraw();
   }
@@ -302,11 +306,11 @@ abstract class Mandelbrot {
 class MandelbrotJS extends Mandelbrot {
   engine = Engine.JS;
 
-  constructor (options: MandelbrotBaseOptions) {
+  constructor(options: MandelbrotBaseOptions) {
     super(Object.assign({}, options, { ctx: options.canvas.getContext("2d") }));
   }
 
-  mandelbrotCalc (x0: number, y0: number): number {
+  mandelbrotCalc(x0: number, y0: number): number {
     let x1 = x0;
     let y1 = y0;
     let x2 = x1 * x1;
@@ -335,7 +339,7 @@ class MandelbrotZig extends Mandelbrot {
   mem: ArrayBuffer;
   memOffset: number;
 
-  constructor (options: MandelbrotZigOptions) {
+  constructor(options: MandelbrotZigOptions) {
     super(Object.assign({}, options, { ctx: options.canvas.getContext("2d") }));
     this.instance = options.instance;
     this.mem = (<WebAssembly.Memory>this.instance.exports.memory).buffer;
@@ -358,7 +362,7 @@ class MandelbrotZig extends Mandelbrot {
     this.limit = limit;
     this.iterations = iterations;
 
-    [ this.canvas.width, this.canvas.height ] = new Uint32Array(
+    [this.canvas.width, this.canvas.height] = new Uint32Array(
       this.mem,
       (<WebAssembly.Global>this.instance.exports.DIMS).value,
       2
@@ -374,34 +378,34 @@ class MandelbrotZig extends Mandelbrot {
     );
   }
 
-  mandelbrotCalc (x0: number, y0: number): number {
+  mandelbrotCalc(x0: number, y0: number): number {
     return (<(x: number, y: number) => number>(
       this.instance.exports.mandelbrot_calc
     ))(x0, y0);
   }
 
-  protected drawImmediate (): void {
+  protected drawImmediate(): void {
     (<(self: number) => void>this.instance.exports.render)(this.memOffset);
   }
 }
 
-async function newEngine (
+async function newEngine(
   engine: Engine,
   options: MandelbrotBaseOptions
 ): Promise<Mandelbrot> {
   switch (engine) {
     case Engine.Zig: {
-      let renderer: MandelbrotZig;
-      const opts = Object.assign(Object.create(null), options, {
-        instance: await WebAssembly.instantiate(await zig_wasm_module, {
-          env: {
-            draw: () => {
-              renderer.ctx.putImageData(renderer.image, 0, 0);
+      const renderer = new MandelbrotZig(
+        Object.assign(Object.create(null), options, {
+          instance: await WebAssembly.instantiate(await zigWasmModule, {
+            env: {
+              draw: () => {
+                renderer.ctx.putImageData(renderer.image, 0, 0);
+              },
             },
-          },
-        }),
-      });
-      renderer = new MandelbrotZig(opts);
+          }),
+        })
+      );
       return renderer;
     }
 
@@ -486,7 +490,8 @@ window.addEventListener("load", async () => {
     let lastY = downEvent.offsetY;
     const mouseUpdate = (moveEvent: MouseEvent) => {
       const boundingCanvas = canvas.getBoundingClientRect();
-      renderer.setX(renderer.x +
+      renderer.setX(
+        renderer.x +
           map(
             lastX - moveEvent.offsetX,
             -boundingCanvas.width,
@@ -494,8 +499,10 @@ window.addEventListener("load", async () => {
             -DEFAULT_SCALE,
             DEFAULT_SCALE
           ) /
-            renderer.z);
-      renderer.setY(renderer.y +
+            renderer.z
+      );
+      renderer.setY(
+        renderer.y +
           map(
             lastY - moveEvent.offsetY,
             -boundingCanvas.height,
@@ -503,7 +510,8 @@ window.addEventListener("load", async () => {
             -DEFAULT_SCALE,
             DEFAULT_SCALE
           ) /
-            renderer.z);
+            renderer.z
+      );
 
       if (renderer.xEl != null) {
         renderer.xEl.value = renderer.x.toString();
@@ -533,14 +541,18 @@ window.addEventListener("load", async () => {
     const boundingCanvas = renderer.canvas.getBoundingClientRect();
     if (e.deltaY < 0) {
       if (renderer.z >= 1) {
-        renderer.setX(renderer.x +
-            (e.offsetX - boundingCanvas.width / 2) / boundingCanvas.width *
-              2 /
-              renderer.z || 0);
-        renderer.setY(renderer.y +
-            (e.offsetY - boundingCanvas.height / 2) / boundingCanvas.height *
-              2 /
-              renderer.z || 0);
+        renderer.setX(
+          renderer.x +
+            (((e.offsetX - boundingCanvas.width / 2) / boundingCanvas.width) *
+              2) /
+              renderer.z || 0
+        );
+        renderer.setY(
+          renderer.y +
+            (((e.offsetY - boundingCanvas.height / 2) / boundingCanvas.height) *
+              2) /
+              renderer.z || 0
+        );
 
         if (renderer.xEl != null) {
           renderer.xEl.value = renderer.x.toString();

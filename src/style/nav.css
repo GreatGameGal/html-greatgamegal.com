@@ -1,7 +1,7 @@
 @import "variables.css";
 
 nav {
-  position:sticky;
+  position: sticky;
   top: 0;
   background-color: var(--nav-background-color);
   z-index: 99;
@@ -9,8 +9,7 @@ nav {
   padding: 0;
   font-size: var(--nav-font-size);
   line-height: var(--nav-lh);
-  
-  
+
   & ul {
     top: 0;
     left: 0;

@@ -8,7 +8,7 @@ const ALL_FILE_GLOB = new Bun.Glob("**/*");
 type FileHandler = (
   srcDir: string | URL,
   outDir: string | URL,
-  path: string | URL,
+  path: string | URL
 ) => Promise<void>;
 
 const tsTranspiler = new Bun.Transpiler({
@@ -20,7 +20,7 @@ const tsTranspiler = new Bun.Transpiler({
 async function transpileTS(
   srcDir: string | URL,
   outDir: string | URL,
-  path: string | URL,
+  path: string | URL
 ) {
   const pathStr = path.toString();
   const outPath = pathStr.slice(0, pathStr.lastIndexOf(".")) + ".js";
@@ -38,7 +38,7 @@ function addClass(element: HTMLRewriterTypes.Element, className: string) {
   const classes = element.getAttribute("class");
   element.setAttribute(
     "class",
-    classes == null ? className : classes + " " + className,
+    classes == null ? className : classes + " " + className
   );
   return element;
 }
@@ -85,7 +85,7 @@ htmlRewriter.on("div#html_component", new ComponentHandler());
 async function transpileHTML(
   srcDir: string | URL,
   outDir: string | URL,
-  path: string | URL,
+  path: string | URL
 ) {
   const srcFile = Bun.file(`${srcDir}${path}`);
   const outFile = Bun.file(`${outDir}${path}`);
@@ -98,7 +98,7 @@ async function transpileHTML(
 async function copyFile(
   srcDir: string | URL,
   outDir: string | URL,
-  path: string | URL,
+  path: string | URL
 ) {
   Bun.write(Bun.file(`${outDir}${path}`), Bun.file(`${srcDir}${path}`));
 }

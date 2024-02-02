@@ -1,7 +1,6 @@
 :root {
-  --text-color: #F5F5F5;
-  --link-color: #33D7D1;
-  
+  --text-color: #f5f5f5;
+  --link-color: #33d7d1;
 
   --main-background-color: #343232;
   --container-background-color: #494646;
@@ -9,31 +8,26 @@
 
   --container-border-radius: 10px;
 
-
   --button-background-color: #494646;
   --button-text-color: var(--text-color);
 
-
   --input-background-color: #535050;
   --input-text-color: var(--text-color);
-  
 
   --checkmark-border-radius: 5px;
-  --checkbox-empty-color: #EBEBEB;
-  --checkbox-disabled-color: #A3A3A3;
-  --checkbox-filled-color: #22AAA6;
+  --checkbox-empty-color: #ebebeb;
+  --checkbox-disabled-color: #a3a3a3;
+  --checkbox-filled-color: #22aaa6;
 
-
-  --nav-background-color: #1F1E1E;
-  --nav-hover-background-color: #2A2828;
-  --nav-active-background-color: #3E3C3C;
-  --nav-border-color: #5E5A5A;
+  --nav-background-color: #1f1e1e;
+  --nav-hover-background-color: #2a2828;
+  --nav-active-background-color: #3e3c3c;
+  --nav-border-color: #5e5a5a;
   --nav-text-color: var(--text-color);
   --nav-font-size: 20px;
 
   --nav-lh: calc(var(--nav-font-size) * 1.5);
   --nav-height: calc(var(--nav-lh) + 16px);
-  
 
-  --footer-background-color: #2A2828;
+  --footer-background-color: #2a2828;
 }
