@@ -3,8 +3,6 @@
 
 const std = @import("std");
 
-extern fn draw() void;
-
 const MathPrecision = f64;
 
 export const DIMS = extern struct { WIDTH: u32, HEIGHT: u32 }{
@@ -62,7 +60,6 @@ const Mandelbrot = extern struct {
                 }
             }
         }
-        draw();
     }
 };
 

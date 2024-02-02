@@ -386,6 +386,7 @@ class MandelbrotZig extends Mandelbrot {
 
   protected drawImmediate(): void {
     (<(self: number) => void>this.instance.exports.render)(this.memOffset);
+    this.ctx.putImageData(this.image, 0, 0);
   }
 }
 
@@ -395,18 +396,11 @@ async function newEngine(
 ): Promise<Mandelbrot> {
   switch (engine) {
     case Engine.Zig: {
-      const renderer = new MandelbrotZig(
+      return new MandelbrotZig(
         Object.assign(Object.create(null), options, {
-          instance: await WebAssembly.instantiate(await zigWasmModule, {
-            env: {
-              draw: () => {
-                renderer.ctx.putImageData(renderer.image, 0, 0);
-              },
-            },
-          }),
+          instance: await WebAssembly.instantiate(await zigWasmModule),
         })
       );
-      return renderer;
     }
 
     case Engine.JS:
