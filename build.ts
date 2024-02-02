@@ -14,7 +14,7 @@ type FileHandler = (
 const tsTranspiler = new Bun.Transpiler({
   loader: "ts",
   target: "browser",
-  //inline: true,
+  inline: true,
 });
 
 async function transpileTS(
