@@ -23,6 +23,9 @@
     "dev": "nodemon --exec 'bun run lintAndFix && bun run build'"
   },
   "nodemonConfig": {
+    "extensions": [
+      "*"
+    ],
     "ignore": [
       "build"
     ],
