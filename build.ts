@@ -69,7 +69,6 @@ class ComponentHandler
 async function transpileTS(srcPath: string, outPath: string) {
   outPath = `${outPath.slice(0, outPath.lastIndexOf("."))}.js`;
   const srcFile = Bun.file(srcPath);
-  const outFile = Bun.file(outPath);
 
   if (!(await srcFile.exists())) {
     return;
@@ -79,7 +78,7 @@ async function transpileTS(srcPath: string, outPath: string) {
 
   const build = tsTranspiler.transformSync(src);
 
-  await Bun.write(outFile, build, { createPath: true });
+  await Bun.write(outPath, build, { createPath: true });
 }
 
 async function transpileHTML(
@@ -88,7 +87,6 @@ async function transpileHTML(
   htmlRewriter: HTMLRewriter
 ) {
   const srcFile = Bun.file(srcPath);
-  const outFile = Bun.file(outPath);
 
   if (!(await srcFile.exists())) {
     return;
@@ -96,7 +94,7 @@ async function transpileHTML(
 
   const src = new Response(await srcFile.text());
   const out = await htmlRewriter.transform(src).arrayBuffer();
-  await Bun.write(outFile, out, { createPath: true });
+  await Bun.write(outPath, out, { createPath: true });
 }
 
 async function copyFile(srcPath: string, outPath: string) {
@@ -104,7 +102,7 @@ async function copyFile(srcPath: string, outPath: string) {
   if (!(await srcFile.exists())) {
     return;
   }
-  await Bun.write(Bun.file(outPath), srcFile, { createPath: true });
+  await Bun.write(outPath, srcFile, { createPath: true });
 }
 
 function transpileFile(
@@ -114,7 +112,7 @@ function transpileFile(
 ) {
   const handler: FileTranspileHandler =
     handlers.get(srcPath.slice(srcPath.lastIndexOf("."))) ?? copyFile;
-  return handler(srcPath, outPath);
+  return handler(path.resolve(srcPath), path.resolve(outPath));
 }
 
 async function transpileDir(srcDir: string, outDir: string) {
