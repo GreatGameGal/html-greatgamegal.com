@@ -4,13 +4,14 @@
   "author": "Serenity Braesch",
   "main": "index.js",
   "devDependencies": {
+    "@types/bun": "^1.0.4",
+    "@types/eslint": "^8.56.2",
     "@types/web": "^0.0.137",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "@typescript-eslint/typescript-estree": "^6.20.0",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.1.0",
-    "nodemon": "^3.0.3",
     "prettier": "^3.2.4",
     "typescript": "^5.2.2"
   },
@@ -18,20 +19,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "lintAndFix": "prettier --write --log-level warn . && eslint --fix .",
-    "build": "tsc && bun run build.ts",
-    "dev": "nodemon --exec 'bun run lintAndFix && bun run build'"
-  },
-  "nodemonConfig": {
-    "extensions": [
-      "*"
-    ],
-    "ignore": [
-      "build"
-    ],
-    "delay": 1000
-  },
-  "dependencies": {
-    "@types/bun": "^1.0.4"
+    "lintAndFix": "bun run build.ts --format --no-build",
+    "build": "bun run build.ts",
+    "dev": "bun run build.ts --format --watch"
   }
 }
