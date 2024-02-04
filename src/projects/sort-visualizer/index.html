@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sort Visualizer</title>
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+  </head>
+  <body>
+    <div
+      id="html_component"
+      addclassbyid="nav_projects:active"
+      src="/components/nav.html"
+    ></div>
+    <main>
+      <h1>Sort Visualizer</h1>
+      <div>
+        <form>
+          <label><strong style="font-size: 1.5em">Algorithm</strong></label>
+          <br />
+          <select name="sorter" id="sorterEl">
+            <option value="Bubble">Bubble Sort</option>
+            <option value="Quick">Quick Sort</option>
+          </select>
+        </form>
+      </div>
+      <canvas id="visualizerCanvas"></canvas>
+      <br />
+      <form onsubmit="return false;">
+        <input type="number" placeholder="Element Count" id="countVal" />
+      </form>
+      <br />
+    </main>
+    <div id="html_component" src="/components/footer.html"></div>
+    <script type="module" text="reset" src="js/main.js"></script>
+  </body>
+</html>
