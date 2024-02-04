@@ -79,7 +79,7 @@ async function transpileTS(srcPath: string, outPath: string) {
 
   const build = tsTranspiler.transformSync(src);
 
-  await Bun.write(outFile, build);
+  await Bun.write(outFile, build, { createPath: true });
 }
 
 async function transpileHTML(
@@ -96,7 +96,7 @@ async function transpileHTML(
 
   const src = new Response(await srcFile.text());
   const out = await htmlRewriter.transform(src).arrayBuffer();
-  await Bun.write(outFile, out);
+  await Bun.write(outFile, out, { createPath: true });
 }
 
 async function copyFile(srcPath: string, outPath: string) {
@@ -104,7 +104,7 @@ async function copyFile(srcPath: string, outPath: string) {
   if (!(await srcFile.exists())) {
     return;
   }
-  await Bun.write(Bun.file(outPath), srcFile);
+  await Bun.write(Bun.file(outPath), srcFile, { createPath: true });
 }
 
 function transpileFile(
