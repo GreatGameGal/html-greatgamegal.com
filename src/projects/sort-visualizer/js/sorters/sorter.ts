@@ -1,3 +1,5 @@
+import { SteppedRunner } from "../../../../js/steppedRunner";
+
 export interface SorterOptions {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -10,7 +12,7 @@ export interface State {
   done: 0;
 }
 
-export abstract class Sorter {
+export abstract class Sorter extends SteppedRunner {
   static defaultLength = 0;
 
   targetDims: number;
@@ -27,6 +29,7 @@ export abstract class Sorter {
     targetDims = 1024,
     data = new Float64Array(length),
   }: SorterOptions) {
+    super();
     this.canvas = canvas;
     this.ctx = ctx;
     this.targetDims = targetDims;
@@ -35,8 +38,12 @@ export abstract class Sorter {
     this.setInternalDims();
   }
 
-  abstract step(): void;
-  abstract reset(): void;
+  reset(): void {
+    this.cleanUp();
+    this.done = false;
+    this.randomize();
+    this.run();
+  }
 
   swap(i: number, j: number): void {
     const temp = this.data[i];

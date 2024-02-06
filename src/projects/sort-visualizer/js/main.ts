@@ -55,10 +55,11 @@ window.addEventListener("load", async () => {
 
   const algo = Algorithms[sorterEl.value ?? defaults.algorithm];
   let sorter = new algo(options);
+  sorter.run();
 
-  const draw = () => {
+  const draw = async () => {
     if (!sorter.done) {
-      sorter.step();
+      await sorter.step();
     }
     sorter.draw();
     requestAnimationFrame(() => draw());
@@ -87,6 +88,8 @@ window.addEventListener("load", async () => {
       return;
     }
     console.log("Setting algorithm", algorithm);
+    sorter.cleanUp();
     sorter = new algorithm(options);
+    sorter.run();
   });
 });

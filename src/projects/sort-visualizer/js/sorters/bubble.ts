@@ -3,9 +3,6 @@ import { type SorterOptions, Sorter } from "./sorter";
 export class BubbleSorter extends Sorter {
   static defaultLength = 128;
 
-  i: number = 0;
-  iterations: number = 0;
-
   constructor(options: SorterOptions) {
     super(
       Object.assign(
@@ -16,30 +13,18 @@ export class BubbleSorter extends Sorter {
     );
   }
 
-  step(): void {
-    this.active.length = 0;
-    this.active.push(this.i, this.i + 1);
-    if (this.i === this.data.length - 1 - this.iterations) {
-      this.i = 0;
-      this.iterations++;
-      if (this.iterations === this.data.length - 2) {
+  async run(): Promise<void> {
+    for (let i = 0; i < this.data.length; i++) {
+      for (let j = 0; j < this.data.length - i; j++) {
+        await this.waitForStep;
         this.active.length = 0;
-        this.done = true;
+        this.active.push(j, j + 1);
+
+        if (this.data[j] > this.data[j + 1]) {
+          this.swap(j, j + 1);
+        }
       }
     }
-    if (this.iterations === this.data.length) {
-      this.reset();
-    }
-    if (this.data[this.i] > this.data[this.i + 1]) {
-      this.swap(this.i, this.i + 1);
-    }
-    this.i++;
-  }
-
-  reset(): void {
-    this.i = 0;
-    this.iterations = 0;
-    this.done = false;
-    this.randomize();
+    this.done = true;
   }
 }
