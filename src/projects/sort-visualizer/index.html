@@ -14,18 +14,22 @@
       <h1>Sort Visualizer</h1>
       <div>
         <form>
-          <label><strong style="font-size: 1.5em">Algorithm</strong></label>
-          <br />
-          <select name="sorter" id="sorterEl">
-            <option value="Bubble">Bubble Sort</option>
-            <option value="Quick">Quick Sort</option>
-          </select>
+          <div>
+            <label><strong>Algorithm</strong></label>
+            <select name="sorter" id="sorterEl">
+              <option value="Bubble">Bubble Sort</option>
+              <option value="Quick">Quick Sort</option>
+            </select>
+          </div>
         </form>
       </div>
       <canvas id="visualizerCanvas"></canvas>
       <br />
       <form onsubmit="return false;">
-        <input type="number" placeholder="Element Count" id="countVal" />
+        <div>
+          <label><strong>Element Count</strong></label>
+          <input type="number" placeholder="Element Count" id="countVal" />
+        </div>
       </form>
       <br />
     </main>

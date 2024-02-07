@@ -1,0 +1,32 @@
+@import "../../style/style.css";
+
+main {
+  height: 90vh;
+  text-align: center;
+}
+
+label strong {
+  font-size: 1.5em;
+}
+
+canvas {
+  image-rendering: pixelated;
+}
+
+h1 {
+  margin: 0.25em;
+}
+
+form {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-flow: column;
+    padding: 2px 2px 2px 2px;
+  }
+}

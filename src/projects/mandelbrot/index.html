@@ -14,25 +14,39 @@
       <h1>Mandelbrot Set</h1>
       <div>
         <form>
-          <label><strong style="font-size: 1.5em">Renderer</strong></label>
-          <br />
-          <select name="renderer" id="engineEl">
-            <option value="js">JS</option>
-            <option value="zig">WASM (ZIG)</option>
-          </select>
+          <div>
+            <label><strong>Renderer</strong></label>
+            <select name="renderer" id="engineEl">
+              <option value="js">JS</option>
+              <option value="zig">WASM (ZIG)</option>
+            </select>
+          </div>
         </form>
       </div>
       <canvas id="mandelbrotCanvas"></canvas>
-      <br />
       <form onsubmit="return false;">
-        <input type="number" placeholder="Iterations" id="iterationsVal" />
-        <input type="number" placeholder="X Mod" id="xVal" />
-        <input type="number" placeholder="Zoom" id="zoomVal" />
-        <input type="number" placeholder="Y Mod" id="yVal" />
-        <input type="number" placeholder="Value Limit" id="limitVal" />
+        <div>
+          <label><strong>Iterations</strong></label>
+          <input type="number" placeholder="Iterations" id="iterationsVal" />
+        </div>
+        <div>
+          <label><strong>X Offset</strong></label>
+          <input type="number" placeholder="X Offset" id="xVal" />
+        </div>
+        <div>
+          <label><strong>Zoom</strong></label>
+          <input type="number" placeholder="Zoom" id="zoomVal" />
+        </div>
+        <div>
+          <label><strong>Y Offset</strong></label>
+          <input type="number" placeholder="Y Offset" id="yVal" />
+        </div>
+        <div>
+          <label><strong>Renderer</strong></label>
+          <input type="number" placeholder="Value Limit" id="limitVal" />
+        </div>
       </form>
       <button id="reset">Reset</button>
-      <br />
     </main>
     <div id="html_component" src="/components/footer.html"></div>
 

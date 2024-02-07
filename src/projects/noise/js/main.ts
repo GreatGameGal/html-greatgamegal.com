@@ -46,7 +46,7 @@ if (
           return;
         }
         const width = parentNode.offsetWidth - 16;
-        const height = parentNode.offsetHeight * 0.85 - 16;
+        const height = parentNode.offsetHeight * 0.8 - 16;
 
         const dim = width > height ? height : width;
         if (canvas.width != dim) {

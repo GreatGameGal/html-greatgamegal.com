@@ -14,10 +14,24 @@
       <h1 style="text-align: center">Noise</h1>
       <canvas id="contentCanvas"></canvas>
       <br />
-      <input type="number" placeholder="Seed" id="seedVal" />
-      <input type="number" placeholder="X Mod" id="xVal" />
-      <input type="number" placeholder="Y Mod" id="yVal" />
-      <input type="number" placeholder="Zoom" id="zVal" />
+      <form onsubmit="return false;">
+        <div>
+          <label><strong>Seed</strong></label>
+          <input type="number" placeholder="Seed" id="seedVal" />
+        </div>
+        <div>
+          <label><strong>X Offset</strong></label>
+          <input type="number" placeholder="X Offset" id="xVal" />
+        </div>
+        <div>
+          <label><strong>Y Offset</strong></label>
+          <input type="number" placeholder="Y Offset" id="yVal" />
+        </div>
+        <div>
+          <label><strong>Zoom</strong></label>
+          <input type="number" placeholder="Zoom" id="zVal" />
+        </div>
+      </form>
     </main>
     <div id="html_component" src="/components/footer.html"></div>
     <script type="module" text="reset" src="js/main.js"></script>
