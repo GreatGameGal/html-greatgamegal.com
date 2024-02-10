@@ -16,7 +16,9 @@ export class BubbleSorter extends Sorter {
   async run(): Promise<void> {
     for (let i = 0; i < this.data.length; i++) {
       for (let j = 0; j < this.data.length - i; j++) {
-        await this.waitForStep;
+        if ((await this.waitForStep) !== 0) {
+          return;
+        }
         this.active.length = 0;
         this.active.push(j, j + 1);
 

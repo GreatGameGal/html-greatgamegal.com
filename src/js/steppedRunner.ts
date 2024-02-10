@@ -1,8 +1,6 @@
-const controller = new AbortController();
-
-type Resolver = () => void;
+type Resolver = (code: number) => void;
 export abstract class SteppedRunner {
-  waitForStep: Promise<void>;
+  waitForStep: Promise<number>;
   resolver?: Resolver;
 
   constructor() {
@@ -17,14 +15,13 @@ export abstract class SteppedRunner {
       const oldResolver = this.resolver;
       this.resolver = res;
       if (oldResolver) {
-        oldResolver();
+        oldResolver(0);
       }
     });
   }
 
-  cleanUp() {
-    controller.abort(this.waitForStep);
-    controller.abort(this.run);
+  async cleanUp() {
+    this.resolver?.(1);
   }
 
   abstract run(): Promise<void>;

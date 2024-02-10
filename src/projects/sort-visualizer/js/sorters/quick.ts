@@ -27,8 +27,9 @@ export class QuickSorter extends Sorter {
       // We know these exist because stack.length > 1
       const high = stack.pop() as number;
       const low = stack.pop() as number;
-
-      await this.waitForStep;
+      if ((await this.waitForStep) !== 0) {
+        return;
+      }
       this.active.length = 0;
       this.active.push(high, low);
 
@@ -36,7 +37,9 @@ export class QuickSorter extends Sorter {
       let p = low - 1;
       let j = low;
       while (j < high) {
-        await this.waitForStep;
+        if ((await this.waitForStep) !== 0) {
+          return;
+        }
         this.active.length = 0;
         this.active.push(high, low, j, pivot);
         if (this.data[j] < pivot) {

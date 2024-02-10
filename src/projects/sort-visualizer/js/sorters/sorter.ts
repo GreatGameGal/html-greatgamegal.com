@@ -40,6 +40,8 @@ export abstract class Sorter extends SteppedRunner {
 
   reset(): void {
     this.cleanUp();
+    // We need to step to recreate a promise after cleanUp.
+    this.step();
     this.done = false;
     this.randomize();
     this.run();
@@ -100,6 +102,7 @@ export abstract class Sorter extends SteppedRunner {
       this.data = this.data.subarray(0, val);
     }
     this.setInternalDims();
+    this.reset();
   }
 
   get length(): number {

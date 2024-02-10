@@ -55,7 +55,7 @@ window.addEventListener("load", async () => {
 
   const algo = Algorithms[sorterEl.value ?? defaults.algorithm];
   let sorter = new algo(options);
-  sorter.run();
+  sorter.run().catch();
 
   const draw = async () => {
     if (!sorter.done) {
@@ -90,6 +90,6 @@ window.addEventListener("load", async () => {
     console.log("Setting algorithm", algorithm);
     sorter.cleanUp();
     sorter = new algorithm(options);
-    sorter.run();
+    sorter.run().catch();
   });
 });
