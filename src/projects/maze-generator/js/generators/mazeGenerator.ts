@@ -142,5 +142,14 @@ export abstract class MazeGenerator extends SteppedRunner {
     this.draw();
   }
 
-  resizeCanvas() {}
+  resizeCanvas() {
+    const parentNode = this.canvas.parentElement;
+    if (!parentNode) {
+      return;
+    }
+    const width = parentNode.clientWidth;
+    const height = parentNode.clientHeight;
+    this.canvas.style.width = `${width}px`;
+    this.canvas.style.height = `${height}px`;
+  }
 }
