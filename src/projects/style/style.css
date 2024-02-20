@@ -1,16 +1,32 @@
 @import "../../style/style.css";
 
 main {
-  height: 90vh;
+  display: flex;
+  flex-flow: column;
   text-align: center;
+  justify: center;
 }
 
 label strong {
   font-size: 1.5em;
 }
 
+h1 {
+  margin: 0;
+}
+
+div:has(canvas) {
+  flex-grow: 2;
+  line-height: 0;
+}
+
 canvas {
+  object-fit: contain;
   image-rendering: pixelated;
+}
+
+button {
+  flex-grow: 0;
 }
 
 h1 {

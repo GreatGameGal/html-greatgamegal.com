@@ -45,13 +45,15 @@ if (
         if (parentNode == null) {
           return;
         }
-        const width = parentNode.offsetWidth - 16;
-        const height = parentNode.offsetHeight * 0.8 - 16;
+        const width = parentNode.clientWidth;
+        const height = parentNode.clientHeight;
 
-        const dim = width > height ? height : width;
+        const dim = Math.min(width, height);
         if (canvas.width != dim) {
           canvas.width = dim;
           canvas.height = dim;
+          canvas.style.width = `${dim}px`;
+          canvas.style.height = `${dim}px`;
           imageData = new ImageData(canvas.width, canvas.height);
         }
         const data = imageData.data;

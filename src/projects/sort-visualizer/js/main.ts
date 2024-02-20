@@ -25,9 +25,9 @@ const resize = (canvas: HTMLCanvasElement) => {
   if (!parentNode) {
     return;
   }
-  const width = parentNode.offsetWidth - 16;
-  const height = parentNode.offsetHeight * 0.7 - 16;
-  const dim = Math.floor(Math.min(width, height));
+  const width = parentNode.clientWidth;
+  const height = parentNode.clientHeight;
+  const dim = Math.min(width, height);
   canvas.style.width = `${dim}px`;
   canvas.style.height = `${dim}px`;
 };

@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Mandelbrot Set Render</title>
+    <title>Mandelbrot Set Renderer</title>
     <link rel="stylesheet" type="text/css" href="style/style.css" />
   </head>
   <body>
@@ -23,7 +23,9 @@
           </div>
         </form>
       </div>
-      <canvas id="mandelbrotCanvas"></canvas>
+      <div>
+        <canvas id="mandelbrotCanvas"></canvas>
+      </div>
       <form onsubmit="return false;">
         <div>
           <label><strong>Iterations</strong></label>
@@ -46,7 +48,7 @@
           <input type="number" placeholder="Value Limit" id="limitVal" />
         </div>
       </form>
-      <button id="reset">Reset</button>
+      <div><button id="reset">Reset</button></div>
     </main>
     <div id="html_component" src="/components/footer.html"></div>
 
