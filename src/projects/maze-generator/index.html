@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Maze Generator</title>
+    <link rel="stylesheet" type="text/css" href="style/style.css" />
+  </head>
+  <body>
+    <div
+      id="html_component"
+      addclassbyid="nav_projects:active"
+      src="/components/nav.html"
+    ></div>
+    <main>
+      <h1>Maze Generator</h1>
+      <div>
+        <form>
+          <div>
+            <label><strong>Algorithm</strong></label>
+            <select name="generator" id="generatorEl">
+              <option value="RecursiveBacktracker">
+                Recursive Backtracker
+              </option>
+              <option value="Kruskal">Kruskal's Algorithm</option>
+              <option value="Prim">Prim's Algorithm</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <canvas id="canvas"></canvas>
+      <form onsubmit="return false;" class="options">
+        <div>
+          <label><strong>Width</strong></label>
+          <input type="number" placeholder="Width" id="widthVal" />
+        </div>
+        <div>
+          <label><strong>Height</strong></label>
+          <input type="number" placeholder="Height" id="heightVal" />
+        </div>
+      </form>
+    </main>
+    <div id="html_component" src="/components/footer.html"></div>
+    <script type="module" text="reset" src="js/main.js"></script>
+  </body>
+</html>
