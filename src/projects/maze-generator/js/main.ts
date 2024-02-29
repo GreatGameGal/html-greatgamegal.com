@@ -101,6 +101,41 @@ window.addEventListener("load", () => {
     });
   }
 
+  const finishBtn = <HTMLButtonElement>document.getElementById("finishBtn");
+  if (finishBtn != null) {
+    finishBtn.addEventListener("click", async () => {
+      while (!generator.done) {
+        await generator.step();
+      }
+    });
+  }
+
+  const resetBtn = <HTMLButtonElement>document.getElementById("restartBtn");
+  if (resetBtn != null) {
+    resetBtn.addEventListener("click", () => {
+      generator.reset();
+    });
+  }
+
+  const exportBtn = <HTMLButtonElement>document.getElementById("exportBtn");
+  if (exportBtn != null) {
+    exportBtn.addEventListener("click", () => {
+      const file = new File(
+        [generator.maze.buffer],
+        `maze-${generator.width}x${generator.height}-${new Date(Date.now()).toISOString()}`,
+        {
+          type: "application/octet-stream",
+        }
+      );
+      const url = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `maze-${generator.width}x${generator.height}-${new Date(Date.now()).toISOString()}`;
+      const click = new MouseEvent("click");
+      link.dispatchEvent(click);
+    });
+  }
+
   window.addEventListener("resize", () => {
     generator.resizeCanvas();
   });
