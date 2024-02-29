@@ -28,7 +28,7 @@ function newGenerator(
     }
 
     default: {
-      throw new Error("Invalid generator type: ", type);
+      throw new Error("Invalid generator type: " + type);
     }
   }
 }
