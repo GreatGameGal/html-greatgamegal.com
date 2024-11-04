@@ -198,7 +198,7 @@ await run("./src", "./build", ".");
 if (FLAG_WATCH) {
   console.log("\nBeginning to watch: .");
 
-  let buildTimeout: NodeJS.Timeout | null = null;
+  let buildTimeout: Timer | null = null;
   const watcher = fs.watch(".", { recursive: true });
   for await (const event of watcher) {
     if (event.filename?.startsWith("build")) {

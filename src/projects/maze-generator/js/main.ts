@@ -121,7 +121,7 @@ window.addEventListener("load", () => {
   if (exportBtn != null) {
     exportBtn.addEventListener("click", () => {
       const file = new File(
-        [generator.maze.buffer],
+        [generator.maze.buffer as ArrayBuffer],
         `maze-${generator.width}x${generator.height}-${new Date(Date.now()).toISOString()}`,
         {
           type: "application/octet-stream",
